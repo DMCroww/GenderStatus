@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
-import android.content.res.TypedArray
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater

@@ -22,7 +22,7 @@ class ApiClient {
 
 	companion object {
 		private const val API_URL = "https://api.dmcroww.live/genderStatus/index.php"
-		private const val API_TOKEN = "XXXXXXXX"
+		private const val API_TOKEN = "XXXXXX" // TODO: Private for now until proper auth developed
 
 		suspend fun getData(context: Context, action: String, username: String? = AppOptions.getData(context).username): JSONArray {
 			val jsonObject = JSONObject()
