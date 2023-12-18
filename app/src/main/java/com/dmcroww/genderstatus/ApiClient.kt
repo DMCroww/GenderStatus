@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package com.dmcroww.genderstatus
 
 import android.content.Context
@@ -10,7 +8,6 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -22,7 +19,19 @@ class ApiClient {
 
 	companion object {
 		private const val API_URL = "https://api.dmcroww.live/genderStatus/index.php"
-		private const val API_TOKEN = "XXXXXX" // TODO: Private for now until proper auth developed
+		private const val API_TOKEN = "DevTest"
+
+		/*
+		DevMode: token "DevTest" used for testing purposes only,
+		         dev usernames are "testUser" and "testPartner"
+
+		TODO: add login logic where user receives the actual
+		      token on first launch after submitting correct
+		      username and password pair
+
+		TODO: change API to accept username/password pair if
+		      token is "login" or smth smth
+    */
 
 		suspend fun getData(context: Context, action: String, username: String? = AppOptions.getData(context).username): JSONArray {
 			val jsonObject = JSONObject()
