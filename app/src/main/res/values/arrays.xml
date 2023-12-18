@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="background_sources">
+        <item>@color/background</item>
+        <item>@color/bright</item>
+        <item>@color/dark</item>
+    </string-array>
+
+    <string-array name="color_sources">
+        <item>@color/foreground</item>
+        <item>@color/dark</item>
+        <item>@color/bright</item>
+    </string-array>
+
+    <string-array name="genders_array">
+        <item>…</item>
+        <item>Hyper Masc</item>
+        <item>Masculine</item>
+        <item>Neutral Masc</item>
+        <item>Neutral</item>
+        <item>Neutral Fem</item>
+        <item>Feminine</item>
+        <item>Hyper Fem</item>
+    </string-array>
+
+    <string-array name="ages_array">
+        <item>…</item>
+        <item>Embryo</item>
+        <item>Baby</item>
+        <item>Kid</item>
+        <item>Teen</item>
+        <item>Adult</item>
+        <item>Oldge</item>
+        <item>Deadge</item>
+    </string-array>
+</resources>

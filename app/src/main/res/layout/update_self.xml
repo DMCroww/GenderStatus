@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:contentDescription="@string/avatar_alt"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/android_dark_128" />
+
+    <TextView
+        android:id="@+id/avatar_hint"
+        style="@android:style/Widget.DeviceDefault.TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:text="@string/hintAvatar"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/avatar"
+        app:layout_constraintEnd_toStartOf="@+id/avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/avatar" />
+
+    <TextView
+        android:id="@+id/title_activity"
+        style="@android:style/Widget.DeviceDefault.TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:labelFor="@id/activity_input"
+        android:text="@string/titleActivity"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/activity_input"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/activity_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        android:autofillHints=""
+        android:fontFamily="casual"
+        android:inputType="text"
+        android:nextFocusDown="@id/mood_input"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/title_mood"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/title_activity" />
+
+    <TextView
+        android:id="@+id/title_mood"
+        style="@android:style/Widget.DeviceDefault.TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:labelFor="@id/mood_input"
+        android:text="@string/titleMood"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/mood_input"
+        app:layout_constraintStart_toStartOf="@+id/title_activity" />
+
+    <EditText
+        android:id="@+id/mood_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:autofillHints=""
+        android:fontFamily="casual"
+        android:inputType="text"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/title_age"
+        app:layout_constraintEnd_toEndOf="@+id/activity_input"
+        app:layout_constraintStart_toStartOf="@+id/activity_input" />
+
+    <TextView
+        android:id="@+id/title_age"
+        style="@android:style/Widget.DeviceDefault.TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:text="@string/titleAge"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/age_slider"
+        app:layout_constraintStart_toStartOf="@+id/title_mood" />
+
+    <TextView
+        android:id="@+id/age_preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:fontFamily="casual"
+        android:text="@string/empty"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/age_slider"
+        app:layout_constraintStart_toEndOf="@+id/title_age"
+        app:layout_constraintTop_toTopOf="@+id/title_age" />
+
+    <SeekBar
+        android:id="@+id/age_slider"
+        style="@style/Widget.AppCompat.SeekBar"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminate="false"
+        android:max="7"
+        android:min="1"
+        android:progress="4"
+        android:thumb="@android:drawable/btn_default"
+        app:layout_constraintBottom_toTopOf="@+id/title_sus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <TextView
+        android:id="@+id/title_sus"
+        style="@android:style/Widget.DeviceDefault.TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:text="@string/titleSus"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/sus_slider"
+        app:layout_constraintStart_toStartOf="@+id/title_mood" />
+
+    <TextView
+        android:id="@+id/sus_preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:fontFamily="casual"
+        android:text="@string/empty"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/sus_slider"
+        app:layout_constraintStart_toEndOf="@+id/title_sus"
+        app:layout_constraintTop_toTopOf="@+id/title_sus" />
+
+    <SeekBar
+        android:id="@+id/sus_slider"
+        style="@style/Widget.AppCompat.SeekBar"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminate="false"
+        android:max="11"
+        android:min="1"
+        android:progress="6"
+        android:thumb="@android:drawable/btn_default"
+        app:layout_constraintBottom_toTopOf="@+id/title_gender"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/title_gender"
+        style="@android:style/Widget.DeviceDefault.TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:text="@string/titleGender"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/gender_slider"
+        app:layout_constraintStart_toStartOf="@+id/title_mood" />
+
+    <TextView
+        android:id="@+id/gender_preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:fontFamily="casual"
+        android:text="@string/empty"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/gender_slider"
+        app:layout_constraintStart_toEndOf="@+id/title_gender"
+        app:layout_constraintTop_toTopOf="@+id/title_gender" />
+
+    <SeekBar
+        android:id="@+id/gender_slider"
+        style="@style/Widget.AppCompat.SeekBar"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:indeterminate="false"
+        android:max="7"
+        android:min="1"
+        android:progress="4"
+        android:thumb="@android:drawable/btn_default"
+        app:layout_constraintBottom_toTopOf="@+id/button_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_save"
+        style="@style/Widget.AppCompat.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/buttonSaveTitle"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Gender Status</string>
+    <string name="titleActivity">Activity</string>
+    <string name="titleMood">Mood</string>
+    <string name="titleAge">Age:</string>
+    <string name="titleGender">Gender:</string>
+    <string name="titleSus">Sus level:</string>
+    <string name="avatar_alt">Avatar Image</string>
+    <string name="empty">…</string>
+    <string name="buttonSaveTitle">Save</string>
+    <string name="buttonUpdateTitle">Edit own</string>
+    <string name="title_app_settings">App Settings</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="background_title">Background:</string>
+    <string name="title_widget_settings">Widget Settings</string>
+    <string name="background_opacity">Background Opacity (%):</string>
+    <string name="save">Save</string>
+    <string name="preferences">Preferences</string>
+    <string name="titleUpdateInt">Update interval (minutes): </string>
+    <string name="select_color">Text color:</string>
+    <string name="hintAvatar">Tap me! -></string>
+    <string name="titleUpdated">Last updated</string>
+
+    <!-- Preference Titles -->
+
+    <!-- Messages Preferences -->
+
+    <!-- Sync Preferences -->
+    <string name="buttonHistoryTitle">History</string>
+    <string name="titleFontSize">Font size:</string>
+    <string name="colors_preview_title">■ Preview ■</string>
+    <string name="avatar_desc">Avatar image</string>
+    <string name="background_desc">Background Image</string>
+    <string name="partner_history_title">Partner History</string>
+    <string name="loader_animation">Loader Animation</string>
+</resources>
