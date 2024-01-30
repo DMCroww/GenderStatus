@@ -54,11 +54,89 @@
   - Array of all previously set statuses of user
   - each only includes following properties: `nick, avatar, activity, mood, gender, age, sus`
 
+# 0. LOGIN
 
+`'action' : 'login'`
+
+Returns current stored user activity on success,
+401 on "user not found/bad password"
+
+### `'fetch'` Examples:
+
+<table>
+<tr>
+<th align="center">
+<img width="420" height="1">
+request:
+</th>
+<th align="center">
+<img width="420" height="1">
+response:
+</th>
+</tr>
+<tr>
+<td>
+Wrong password:
+
+```json
+{
+  "username": "devUser1",
+  "password": "99999999",
+  "action": "login"
+}
+```
+
+</td>
+<td>
+
+```json
+{
+  "success": false,
+  "data": false,
+  "error": "Incorrect password."
+}
+```
+
+</td>
+</tr>
+<tr>
+<td>
+Correct password
+
+```json
+{
+  "username": "devUser1",
+  "password": "123456789",
+  "action": "login"
+}
+```
+
+</td>
+<td>
+
+```json
+{
+  "success": true,
+  "data": [
+    "circuit.png",
+    "flower.png",
+    "smoke.png",
+    "squares.png"
+  ],
+  "error": false
+}
+```
+
+</td>
+</tr>
+
+
+</table>
 
 # 1. Fetch Actions
 
 ## 1.1 Self
+
 `'action' : 'fetch self'`
 
 Returns currently set status info.
@@ -70,8 +148,10 @@ Returns currently set status info.
 
 'friend': (username of friend you're trying to get)
 
+
 ## 1.3 Friends
-`'action' : 'fetch friends [status|history]'`
+
+`'action' : 'fetch friends'`
 
 returns Object of valid friends if there are any, 403 otherwise
 
@@ -139,7 +219,7 @@ response:
 {
   "username": "devUser1",
   "password": "123456789",
-  "action": "fetch friends status"
+  "action": "fetch friends"
 }
 ```
 
@@ -153,8 +233,8 @@ response:
     "devUser2": {
       "nick": "Dev User 2",
       "avatar": "test.png",
-      "activity": "Test activity.",
-      "mood": "Test mood.",
+      "activity": "Test activity 2.",
+      "mood": "Test mood 2.",
       "gender": "3",
       "age": "3",
       "sus": "1",
@@ -267,7 +347,6 @@ Update users status.
 <th align="center">
 <img width="420" height="1">
 request:
-</p>
 </th>
 <th align="center">
 <img width="420" height="1">
