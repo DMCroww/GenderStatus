@@ -1,6 +1,8 @@
 package com.dmcroww.genderstatus
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -19,6 +21,11 @@ import java.util.Date
 import java.util.Locale
 
 class MainActivity: AppCompatActivity() {
+	private var appData = AppOptions(applicationContext)
+	private var storageManager: StorageManager = StorageManager(applicationContext)
+	private var userData = UserData(applicationContext)
+	private val genders: Array<String> = resources.getStringArray(R.array.genders_array)
+	private val ages: Array<String> = resources.getStringArray(R.array.ages_array)
 
 	// Define UI elements
 	private lateinit var dataActivity: TextView
@@ -31,15 +38,13 @@ class MainActivity: AppCompatActivity() {
 	private lateinit var buttonUpdate: ImageButton
 	private lateinit var buttonPreferences: ImageButton
 	private lateinit var buttonHistory: ImageButton
-
-	private lateinit var appData: AppOptions
+	private val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
 	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.main)
-
-		appData = AppOptions.getData(applicationContext)
+		notificationManager.createNotificationChannel(NotificationChannel("friends_update_channel", "Friends Status Updates", NotificationManager.IMPORTANCE_LOW))
 
 		// Initialize UI elements
 		dataActivity = findViewById(R.id.dataActivity)
@@ -49,6 +54,7 @@ class MainActivity: AppCompatActivity() {
 		dataGender = findViewById(R.id.dataGender)
 		dataDelta = findViewById(R.id.dataDelta)
 		dataUpdated = findViewById(R.id.dataUpdated)
+
 		buttonUpdate = findViewById(R.id.button_update)
 		buttonPreferences = findViewById(R.id.button_preferences)
 		buttonHistory = findViewById(R.id.button_history)
@@ -56,7 +62,7 @@ class MainActivity: AppCompatActivity() {
 		val serviceIntent = Intent(this, UpdateService::class.java)
 		val updateIntent = Intent(this, UpdateSelf::class.java)
 		val preferencesIntent = Intent(this, Preferences::class.java)
-		val historyIntent = Intent(this, PartnerHistory::class.java)
+		val historyIntent = Intent(this, FriendHistory::class.java)
 
 		startService(serviceIntent)
 		buttonUpdate.setOnClickListener {startActivity(updateIntent)}
@@ -66,6 +72,19 @@ class MainActivity: AppCompatActivity() {
 		sendBroadcast(Intent("com.dmcroww.genderstatus.FORCE_UPDATE"))
 
 		Log.d("MAIN", "onCreate()")
+		lifecycleScope.launch {
+			if (appData.lastCacheTs < (System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS) && userData.username.isNotBlank()) {
+				val apiClient = ApiClient(applicationContext)
+
+				apiClient.getArray("fetch backgrounds")
+					.let {storageManager.fetchImage("backgrounds", it.toString(), true)}
+				apiClient.getArray("fetch avatars")
+					.let {storageManager.fetchImage("avatars", it.toString(), true)}
+
+				appData.lastCacheTs = System.currentTimeMillis()
+				appData.save()
+			}
+		}
 	}
 
 	@SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -73,11 +92,12 @@ class MainActivity: AppCompatActivity() {
 		super.onResume()
 
 		// Register broadcast receiver for data updates
-		val filter = IntentFilter()
-		filter.addAction("com.dmcroww.genderstatus.PREFERENCES_UPDATED")
-		filter.addAction("com.dmcroww.genderstatus.DATA_UPDATED")
-		filter.addAction("com.dmcroww.genderstatus.DATA_FAILED")
-		filter.addAction("com.dmcroww.genderstatus.DATA_NOT_FOUND")
+		val filter = IntentFilter().apply {
+			addAction("com.dmcroww.genderstatus.PREFERENCES_UPDATED")
+			addAction("com.dmcroww.genderstatus.DATA_UPDATED")
+			addAction("com.dmcroww.genderstatus.DATA_FAILED")
+			addAction("com.dmcroww.genderstatus.DATA_NOT_FOUND")
+		}
 
 		registerReceiver(updateReceiver, filter)
 		// Read stored status, set theme, and set up intents
@@ -97,45 +117,32 @@ class MainActivity: AppCompatActivity() {
 	 */
 	@SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
 	private fun readStoredStatus() {
-		val genders: Array<String> = resources.getStringArray(R.array.genders_array)
-		val ages: Array<String> = resources.getStringArray(R.array.ages_array)
-
-		val partner = StorageManager.getPartner(applicationContext)
-
-		val delta = timestampToDelta(partner.timestamp)
-		val updated = timestampToDateTime(partner.timestamp)
-
 		setTheme()
-		lifecycleScope.launch {
 
-			val image = StorageManager.fetchImage(applicationContext, "avatars", partner.avatar)
-			if (image != null) {
-				findViewById<ImageView>(R.id.avatar).setImageBitmap(image)
-			} else {
-				findViewById<ImageView>(R.id.avatar).setImageDrawable(getDrawable(R.drawable.android_128))
-			}
-			if (appData.lastCacheTs < (System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS) && appData.username != "") {
-				val backgrounds = ApiClient.getData(applicationContext, "backgrounds")
-				(0 until backgrounds.length()).map {
-					StorageManager.fetchImage(applicationContext, "backgrounds", backgrounds.getString(it), true)
-				}
-				val avatars = ApiClient.getData(applicationContext, "avatars")
-				(0 until avatars.length()).map {
-					StorageManager.fetchImage(applicationContext, "avatars", avatars.getString(it), true)
-				}
-				appData.lastCacheTs = System.currentTimeMillis()
-				AppOptions.saveData(applicationContext, appData)
-			}
+		userData.friends.all {
+			val person = storageManager.loadPerson(it)
+			val personStatus = person.status
 
+			val delta = timestampToDelta(personStatus.timestamp)
+			val updated = timestampToDateTime(personStatus.timestamp)
+
+			lifecycleScope.launch {
+				val image = storageManager.fetchImage("avatars", personStatus.avatar)
+				if (image != null) {
+					findViewById<ImageView>(R.id.avatar).setImageBitmap(image)
+				} else {
+					findViewById<ImageView>(R.id.avatar).setImageDrawable(getDrawable(R.drawable.android_128))
+				}
+				dataActivity.text = personStatus.activity
+				dataMood.text = personStatus.mood
+				dataAge.text = ages[personStatus.age]
+				dataSus.text = if (personStatus.sus > 0) "${(personStatus.sus - 1) * 10}%" else "..."
+				dataGender.text = genders[personStatus.gender]
+				dataDelta.text = delta
+				dataUpdated.text = "($updated)"
+			}
+			true
 		}
-
-		dataActivity.text = partner.activity
-		dataMood.text = partner.mood
-		dataAge.text = ages[partner.age]
-		dataSus.text = if (partner.sus > 0) "${(partner.sus - 1) * 10}%" else "..."
-		dataGender.text = genders[partner.gender]
-		dataDelta.text = delta
-		dataUpdated.text = "($updated)"
 	}
 
 	/**
@@ -158,9 +165,9 @@ class MainActivity: AppCompatActivity() {
 	 * Sets the app's theme based on user preferences.
 	 */
 	private fun setTheme() {
-		appData = AppOptions.getData(applicationContext)
+		appData = AppOptions(applicationContext)
 		lifecycleScope.launch {
-			val backgroundImage = if (appData.background != "") StorageManager.fetchImage(applicationContext, "backgrounds", appData.background) else null
+			val backgroundImage = if (appData.background != "") storageManager.fetchImage("backgrounds", appData.background) else null
 			findViewById<ImageView>(R.id.backgroundImage).setImageBitmap(backgroundImage)
 		}
 

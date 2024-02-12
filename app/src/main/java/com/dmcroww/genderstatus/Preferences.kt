@@ -31,8 +31,8 @@ import java.io.InputStream
 
 class Preferences: AppCompatActivity() {
 	private lateinit var appData: AppOptions
+	private lateinit var userData: UserData
 	private lateinit var userInput: EditText
-	private lateinit var partnerInput: EditText
 	private lateinit var intervalView: TextView
 	private lateinit var updateIntBar: SeekBar
 	private lateinit var fontSizeView: TextView
@@ -41,27 +41,28 @@ class Preferences: AppCompatActivity() {
 	private lateinit var backgroundsList: List<Bitmap?>
 	private lateinit var backgroundsNames: List<String>
 	private var backgroundsLoaded: Boolean = false
-
+	private lateinit var storageManager: StorageManager
+	private lateinit var apiClient: ApiClient
 
 	@SuppressLint("SetTextI18n")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.preferences)
-
 		// Initialize SharedPreferences
-		appData = AppOptions.getData(applicationContext)
+		appData = AppOptions(applicationContext)
+		userData = UserData(applicationContext)
+		storageManager = StorageManager(applicationContext)
+		apiClient = ApiClient(applicationContext)
 
 		// Initialize UI elements
 		userInput = findViewById(R.id.user_edittext)
-		partnerInput = findViewById(R.id.partner_edittext)
 		updateIntBar = findViewById(R.id.updateInt_bar)
 		intervalView = findViewById(R.id.updateInt_data)
 		fontSizeBar = findViewById(R.id.fontsize_bar)
 		fontSizeView = findViewById(R.id.fontsize_data)
 
 		// Load saved preferences
-		userInput.setText(appData.username)
-		partnerInput.setText(appData.partner)
+		userInput.setText(userData.username)
 		updateIntBar.progress = appData.updateInterval
 		intervalView.text = updateIntBar.progress.toString()
 		fontSizeBar.progress = appData.fontSize / 5
@@ -74,6 +75,7 @@ class Preferences: AppCompatActivity() {
 				intervalView.text = progress.toString()
 				appData.updateInterval = progress
 			}
+
 			override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 			override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 		})
@@ -83,33 +85,26 @@ class Preferences: AppCompatActivity() {
 				fontSizeView.text = "$value%"
 				appData.fontSize = value
 			}
+
 			override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 			override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 		})
 
 		lifecycleScope.launch {
-			backgrounds = ApiClient.getData(applicationContext, "backgrounds")
-			backgroundsList = (0 until backgrounds.length()).map {
-				StorageManager.fetchImage(applicationContext, "backgrounds", backgrounds.getString(it))
-			}
-			backgroundsNames = (0 until backgrounds.length()).map {
-				backgrounds.getString(it)
-			}
+			backgrounds = apiClient.getArray("fetch backgrounds")
+			backgroundsList = listOf(backgrounds.let {
+				storageManager.fetchImage("backgrounds", it.toString())
+			})
+			backgroundsNames = listOf(backgrounds.toString())
 			backgroundsLoaded = true
 		}
 
 		// Save button click listener
 		val saveButton = findViewById<Button>(R.id.save_button)
 		saveButton.setOnClickListener {
-			appData.username = userInput.text.toString().lowercase().trim()
-			appData.partner = partnerInput.text.toString().lowercase().trim()
-
-			AppOptions.saveData(applicationContext, appData)
+			appData.save()
 			GlobalScope.launch(Dispatchers.Main) {
 				try {
-					StorageManager.saveUser(applicationContext, ApiClient.fetchUser(applicationContext))
-					StorageManager.savePartner(applicationContext, ApiClient.fetchPartner(applicationContext))
-
 					Toast.makeText(applicationContext, "Preferences saved", Toast.LENGTH_SHORT).show()
 					finish()
 					sendBroadcast(Intent("com.dmcroww.genderstatus.PREFERENCES_UPDATED"))
@@ -157,12 +152,12 @@ class Preferences: AppCompatActivity() {
 			val dialog = AlertDialog.Builder(this)
 				.setTitle("Select Predefined Background")
 				.setView(dialogView)
-				.setNegativeButton("Cancel") { dialog, _ ->
+				.setNegativeButton("Cancel") {dialog, _ ->
 					dialog.dismiss()
 				}
 				.create()
 
-			gridView.setOnItemClickListener { _, _, position, _ ->
+			gridView.setOnItemClickListener {_, _, position, _ ->
 				appData.background = backgroundsNames[position]
 				dialog.dismiss()
 			}

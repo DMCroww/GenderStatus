@@ -31,16 +31,17 @@ class UpdateSelf: AppCompatActivity() {
 	private lateinit var susPreview: TextView
 	private lateinit var genderSlider: SeekBar
 	private lateinit var genderPreview: TextView
-	private lateinit var user: Person
 	private lateinit var avatars: JSONArray
 	private lateinit var avatarsList: List<Bitmap?>
 	private lateinit var avatarsNames: List<String>
+	private var userData = UserData(applicationContext)
+	private val storageManager = StorageManager(applicationContext)
+	private val genders: Array<String> = resources.getStringArray(R.array.genders_array)
+	private val ages: Array<String> = resources.getStringArray(R.array.ages_array)
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.update_self)
-		user = StorageManager.getUser(applicationContext)
-
 
 		// Initialize UI elements
 		avatarImage = findViewById(R.id.avatar)
@@ -54,7 +55,7 @@ class UpdateSelf: AppCompatActivity() {
 		genderPreview = findViewById(R.id.gender_preview)
 
 		lifecycleScope.launch {
-			val image = StorageManager.fetchImage(applicationContext, "avatars", user.avatar)
+			val image = storageManager.fetchImage("avatars", userData.status.avatar)
 			if (image != null) {
 				avatarImage.setImageBitmap(image)
 				findViewById<TextView>(R.id.avatar_hint).text = ""
@@ -62,51 +63,49 @@ class UpdateSelf: AppCompatActivity() {
 				Toast.makeText(this@UpdateSelf, "Failed to load image from cache", Toast.LENGTH_SHORT).show()
 			}
 
-			avatars = ApiClient.getData(applicationContext, "avatars")
-			avatarsList = (0 until avatars.length()).map {
-				StorageManager.fetchImage(applicationContext, "avatars", avatars.getString(it))
-			}
-			avatarsNames = (0 until avatars.length()).map {
-				avatars.getString(it)
-			}
+			avatars = ApiClient(applicationContext).getArray("fetch avatars")
+			avatarsList = listOf(avatars.let {
+				storageManager.fetchImage("avatars", it.toString())
+			})
+			avatarsNames = listOf(avatars.toString())
 		}
 
 		avatarImage.setOnClickListener {
 			this.showAvatarDialog()
 		}
 
-		activityInput.setText(user.activity)
-		moodInput.setText(user.mood)
-		ageSlider.progress = if (user.age > 0) user.age else 4
-		agePreview.text = resources.getStringArray(R.array.ages_array)[user.age]
-		susSlider.progress = if (user.sus > 0) user.sus else 6
-		susPreview.text = if (user.sus > 0) "${(user.sus - 1) * 10}%" else "…"
-		genderSlider.progress = if (user.gender > 0) user.gender else 6
-		genderPreview.text = resources.getStringArray(R.array.genders_array)[user.gender]
+		activityInput.setText(userData.status.activity)
+		moodInput.setText(userData.status.mood)
+		ageSlider.progress = if (userData.status.age > 0) userData.status.age else 4
+		agePreview.text = resources.getStringArray(R.array.ages_array)[userData.status.age]
+		susSlider.progress = if (userData.status.sus > 0) userData.status.sus else 6
+		susPreview.text = if (userData.status.sus > 0) "${(userData.status.sus - 1) * 10}%" else "…"
+		genderSlider.progress = if (userData.status.gender > 0) userData.status.gender else 6
+		genderPreview.text = resources.getStringArray(R.array.genders_array)[userData.status.gender]
 
 
 		setupSeekBarListeners()
 
 		val saveButton = findViewById<Button>(R.id.button_save)
 		saveButton.setOnClickListener {
-			user.activity = activityInput.text.toString().trim()
-			user.mood = moodInput.text.toString().trim()
-			postUpdatedSelf()
-			Toast.makeText(this, "Info updated.", Toast.LENGTH_SHORT).show()
+			userData.status.activity = activityInput.text.toString().trim()
+			userData.status.mood = moodInput.text.toString().trim()
+			userData.save()
+			lifecycleScope.launch {
+				ApiClient(applicationContext).postStatus()
+				Toast.makeText(applicationContext, "Status updated.", Toast.LENGTH_SHORT).show()
+			}
 			finish()
 		}
 	}
 
 	private fun setupSeekBarListeners() {
 
-		val genders: Array<String> = resources.getStringArray(R.array.genders_array)
-		val ages: Array<String> = resources.getStringArray(R.array.ages_array)
-
 		genderSlider.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
 			@SuppressLint("SetTextI18n")
 			override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 				if (fromUser) {
-					user.gender = progress
+					userData.status.gender = progress
 					genderPreview.text = genders[progress]
 				}
 			}
@@ -119,7 +118,7 @@ class UpdateSelf: AppCompatActivity() {
 			@SuppressLint("SetTextI18n")
 			override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 				if (fromUser) {
-					user.age = progress
+					userData.status.age = progress
 					agePreview.text = ages[progress]
 				}
 			}
@@ -132,8 +131,8 @@ class UpdateSelf: AppCompatActivity() {
 			@SuppressLint("SetTextI18n")
 			override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 				if (fromUser) {
-					user.sus = progress
-					susPreview.text = ((progress-1) * 10).toString() + "%"
+					userData.status.sus = progress
+					susPreview.text = ((progress - 1) * 10).toString() + "%"
 				}
 			}
 
@@ -158,7 +157,7 @@ class UpdateSelf: AppCompatActivity() {
 			.create()
 
 		gridView.setOnItemClickListener {_, _, position, _ ->
-			user.avatar = avatarsNames[position]
+			userData.status.avatar = avatarsNames[position]
 			avatarImage.setImageBitmap(avatarsList[position])
 			dialog.dismiss()
 		}
@@ -198,14 +197,6 @@ class UpdateSelf: AppCompatActivity() {
 			}
 
 			return imageView
-		}
-	}
-
-
-	private fun postUpdatedSelf() {
-		lifecycleScope.launch {
-			StorageManager.saveUser(applicationContext, user)
-			ApiClient.postData(applicationContext, user)
 		}
 	}
 }

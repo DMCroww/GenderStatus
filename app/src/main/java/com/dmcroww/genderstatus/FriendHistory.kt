@@ -32,7 +32,7 @@ private lateinit var appData: AppOptions
 private var finalColorIdx: Int = 0
 private lateinit var rotateAnimation: RotateAnimation
 
-class PartnerHistory: AppCompatActivity() {
+class FriendHistory: AppCompatActivity() {
 
 	private val dataUpdateReceiver = object: BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
@@ -45,7 +45,7 @@ class PartnerHistory: AppCompatActivity() {
 	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.partner_history)
+		setContentView(R.layout.friend_history)
 
 		// Register the receiver for the broadcast
 		val filter = IntentFilter("com.dmcroww.genderstatus.DATA_UPDATED")
