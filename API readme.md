@@ -63,83 +63,10 @@ Returns current stored user activity on success,
 
 ### `'fetch'` Examples:
 
-<table>
-<tr>
-<th align="center">
-<img width="420" height="1">
-request:
-</th>
-<th align="center">
-<img width="420" height="1">
-response:
-</th>
-</tr>
-<tr>
-<td>
-Wrong password:
-
-```json
-{
-  "username": "devUser1",
-  "password": "99999999",
-  "action": "login"
-}
-```
-
-</td>
-<td>
-
-```json
-{
-  "success": false,
-  "data": false,
-  "error": "Incorrect password."
-}
-```
-
-</td>
-</tr>
-<tr>
-<td>
-Correct password
-
-```json
-{
-  "username": "devUser1",
-  "password": "123456789",
-  "action": "login"
-}
-```
-
-</td>
-<td>
-
-```json
-{
-  "success": true,
-  "data": {
-    "nick": "Dev User 1",
-    "avatar": "test.png",
-    "activity": "Test activity.",
-    "mood": "Test mood.",
-    "gender": "3",
-    "age": "3",
-    "sus": "1"
-  },
-  "error": false
-}
-```
-
-</td>
-</tr>
-
-
-</table>
 
 # 1. Fetch Actions
 
 ## 1.1 Self
-
 `'action' : 'fetch self'`
 
 Returns currently set status info.
@@ -151,10 +78,8 @@ Returns currently set status info.
 
 'friend': (username of friend you're trying to get)
 
-
 ## 1.3 Friends
-
-`'action' : 'fetch friends'`
+`'action' : 'fetch friends [status|history]'`
 
 returns Object of valid friends if there are any, 403 otherwise
 
