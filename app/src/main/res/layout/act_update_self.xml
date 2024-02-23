@@ -16,7 +16,7 @@
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/android_dark_128" />
+        app:srcCompat="@drawable/android_128" />
 
     <TextView
         android:id="@+id/avatar_hint"

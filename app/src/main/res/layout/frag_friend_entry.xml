@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_window"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".MainActivity">
+    android:background="@android:color/transparent"
+    android:paddingHorizontal="8dp">
 
-    <ImageView
-        android:id="@+id/backgroundImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:foregroundTint="#11000000"
-        android:foregroundTintMode="multiply"
-        android:scaleType="centerCrop"
+
+    <TextView
+        android:id="@+id/nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:shadowColor="#888888"
+        android:text="@string/nickname"
+        android:textColor="@color/foreground"
+        android:textSize="40sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/background_desc" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="72dp"
+        android:layout_marginEnd="128dp"
         android:contentDescription="@string/avatar_alt"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView3"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/button_preferences"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nickname"
         app:srcCompat="@drawable/android_128" />
 
     <ScrollView
+        android:id="@+id/scrollView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/title_age"
-        app:layout_constraintTop_toBottomOf="@+id/avatar"
-        tools:layout_editor_absoluteX="32dp">
+        app:layout_constraintBottom_toTopOf="@+id/title_age">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/title_activity"
-                style="@android:style/Widget.DeviceDefault.TextView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="casual"
@@ -62,7 +62,6 @@
 
             <TextView
                 android:id="@+id/dataActivity"
-                style="@android:style/Widget.DeviceDefault.TextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -80,7 +79,6 @@
 
             <TextView
                 android:id="@+id/title_mood"
-                style="@android:style/Widget.DeviceDefault.TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -93,7 +91,6 @@
 
             <TextView
                 android:id="@+id/dataMood"
-                style="@android:style/Widget.DeviceDefault.TextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -112,11 +109,8 @@
 
     <TextView
         android:id="@+id/title_age"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="-8dp"
         android:layout_weight="1"
         android:fontFamily="casual"
         android:shadowColor="#888888"
@@ -129,17 +123,15 @@
 
     <TextView
         android:id="@+id/dataAge"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="32dp"
         android:layout_weight="1"
         android:fontFamily="casual"
         android:paddingStart="4dp"
         android:paddingEnd="16dp"
         android:shadowColor="#888888"
         android:text="@string/empty"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/foreground"
         android:textSize="24sp"
         android:textStyle="bold|italic"
@@ -151,14 +143,13 @@
 
     <TextView
         android:id="@+id/title_sus"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-8dp"
         android:layout_weight="1"
         android:fontFamily="casual"
         android:shadowColor="#888888"
         android:text="@string/titleSus"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/foreground"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -168,17 +159,15 @@
 
     <TextView
         android:id="@+id/dataSus"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="32dp"
         android:layout_weight="1"
         android:fontFamily="casual"
         android:paddingStart="4dp"
         android:paddingEnd="16dp"
         android:shadowColor="#888888"
         android:text="@string/empty"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/foreground"
         android:textSize="24sp"
         android:textStyle="bold|italic"
@@ -191,14 +180,13 @@
 
     <TextView
         android:id="@+id/title_gender"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:layout_weight="1"
         android:fontFamily="casual"
         android:shadowColor="#888888"
         android:text="@string/titleGender"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/foreground"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -207,17 +195,15 @@
 
     <TextView
         android:id="@+id/dataGender"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="32dp"
         android:layout_weight="1"
         android:fontFamily="casual"
         android:paddingStart="4dp"
         android:paddingEnd="16dp"
         android:shadowColor="#888888"
         android:text="@string/empty"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/foreground"
         android:textSize="24sp"
         android:textStyle="bold|italic"
@@ -229,13 +215,13 @@
 
     <TextView
         android:id="@+id/title_updated"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="casual"
         android:shadowColor="#888888"
         android:text="@string/titleUpdated"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/foreground"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -243,25 +229,7 @@
         app:layout_constraintStart_toStartOf="@+id/title_gender" />
 
     <TextView
-        android:id="@+id/dataUpdated"
-        style="@android:style/Widget.DeviceDefault.TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:paddingHorizontal="4dp"
-        android:shadowColor="#888888"
-        android:text="@string/empty"
-        android:textColor="@color/foreground"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/title_updated" />
-
-    <TextView
         android:id="@+id/dataDelta"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -277,39 +245,26 @@
         app:layout_constraintStart_toEndOf="@+id/title_updated"
         app:layout_constraintTop_toTopOf="@+id/title_updated" />
 
-    <ImageButton
-        android:id="@+id/button_preferences"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/preferences"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/avatar"
-        app:srcCompat="@drawable/settings_48"
-        app:tint="@color/foreground" />
-
-    <ImageButton
-        android:id="@+id/button_update"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="24dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/buttonHistoryTitle"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/avatar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/edit_48"
-        app:tint="@color/foreground" />
+    <TextView
+        android:id="@+id/dataUpdated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:paddingHorizontal="4dp"
+        android:shadowColor="#888888"
+        android:text="@string/empty"
+        android:textColor="@color/foreground"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/title_updated" />
 
     <ImageButton
         android:id="@+id/button_history"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/buttonUpdateTitle"
         android:scaleType="fitCenter"
@@ -318,5 +273,6 @@
         app:layout_constraintTop_toBottomOf="@+id/title_gender"
         app:srcCompat="@drawable/history_48"
         app:tint="@color/foreground" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,9 +19,11 @@
         android:theme="@style/Theme.Material3.DayNight.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".PartnerHistory"
+            android:name=".LoginActivity"
             android:exported="false" />
-
+        <activity
+            android:name="FriendHistoryActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -33,18 +35,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UpdateSelf"
+            android:name=".PostStatusActivity"
             android:exported="false"
             android:label="Edit status"
             android:theme="@style/Theme.Material3.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.UPDATE" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".Preferences"
+            android:name=".PreferencesActivity"
             android:exported="false"
             android:label="Settings"
             android:theme="@style/Theme.Material3.DayNight.NoActionBar">
@@ -56,7 +57,7 @@
         </activity>
 
         <service
-            android:name=".UpdateService"
+            android:name=".providers.UpdateService"
             android:exported="false" />
     </application>
 

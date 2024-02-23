@@ -5,21 +5,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PartnerHistory">
+    tools:context=".FriendHistoryActivity">
 
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.75"
+        android:contentDescription="@string/background_desc"
         android:defaultFocusHighlightEnabled="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:focusedByDefault="false"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/background_desc" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title_history"
@@ -31,7 +31,7 @@
         android:fontFamily="casual"
         android:shadowColor="#FF888888"
         android:shadowRadius="4"
-        android:text="@string/partner_history_title"
+        android:text="@string/friend_history_title"
         android:textAllCaps="false"
         android:textSize="40sp"
         android:textStyle="bold"
@@ -43,13 +43,13 @@
         android:id="@+id/loadingImage"
         android:layout_width="64dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/loader_animation"
         android:scaleType="fitCenter"
         android:src="@drawable/loading_48"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_history"
-        android:contentDescription="@string/loader_animation" />
+        app:layout_constraintTop_toBottomOf="@+id/title_history" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -57,6 +57,8 @@
         android:layout_height="0dp"
         android:alpha="1"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loadingImage">
 
         <LinearLayout

@@ -1,6 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package com.dmcroww.genderstatus
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -12,77 +16,64 @@ import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager.widget.ViewPager
+import com.dmcroww.genderstatus.entities.AppOptions
+import com.dmcroww.genderstatus.entities.UserData
+import com.dmcroww.genderstatus.providers.ApiClient
+import com.dmcroww.genderstatus.providers.StorageManager
+import com.dmcroww.genderstatus.providers.SubScreenFragment
+import com.dmcroww.genderstatus.providers.UpdateService
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class MainActivity: AppCompatActivity() {
+	private lateinit var appData: AppOptions
+	private lateinit var storageManager: StorageManager
+	private lateinit var userData: UserData
+	private lateinit var apiClient: ApiClient
 
 	// Define UI elements
-	private lateinit var dataActivity: TextView
-	private lateinit var dataMood: TextView
-	private lateinit var dataAge: TextView
-	private lateinit var dataSus: TextView
-	private lateinit var dataGender: TextView
-	private lateinit var dataDelta: TextView
-	private lateinit var dataUpdated: TextView
-	private lateinit var buttonUpdate: ImageButton
+	private lateinit var buttonPostStatus: ImageButton
 	private lateinit var buttonPreferences: ImageButton
-	private lateinit var buttonHistory: ImageButton
-
-	private lateinit var appData: AppOptions
+	private lateinit var notificationManager: NotificationManager
 
 	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.main)
+		apiClient = ApiClient(applicationContext)
 
-		appData = AppOptions.getData(applicationContext)
-
-		// Initialize UI elements
-		dataActivity = findViewById(R.id.dataActivity)
-		dataMood = findViewById(R.id.dataMood)
-		dataAge = findViewById(R.id.dataAge)
-		dataSus = findViewById(R.id.dataSus)
-		dataGender = findViewById(R.id.dataGender)
-		dataDelta = findViewById(R.id.dataDelta)
-		dataUpdated = findViewById(R.id.dataUpdated)
-		buttonUpdate = findViewById(R.id.button_update)
-		buttonPreferences = findViewById(R.id.button_preferences)
-		buttonHistory = findViewById(R.id.button_history)
-
-		val serviceIntent = Intent(this, UpdateService::class.java)
-		val updateIntent = Intent(this, UpdateSelf::class.java)
-		val preferencesIntent = Intent(this, Preferences::class.java)
-		val historyIntent = Intent(this, PartnerHistory::class.java)
-
-		startService(serviceIntent)
-		buttonUpdate.setOnClickListener {startActivity(updateIntent)}
-		buttonPreferences.setOnClickListener {startActivity(preferencesIntent)}
-		buttonHistory.setOnClickListener {startActivity(historyIntent)}
-
-		sendBroadcast(Intent("com.dmcroww.genderstatus.FORCE_UPDATE"))
-
+		apiClient.login {success, errorMessage ->
+			if (!success) {
+				// Login failed, present user with login screen
+				Log.e("MAIN", "Error: $errorMessage")
+				startActivity(Intent(this, LoginActivity::class.java))
+				finish()
+			}
+		}
+		continueSetup()
 		Log.d("MAIN", "onCreate()")
 	}
 
 	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	override fun onResume() {
 		super.onResume()
+		Log.d("MAIN", "onResume()")
+
+		refreshViewPager()
 
 		// Register broadcast receiver for data updates
-		val filter = IntentFilter()
-		filter.addAction("com.dmcroww.genderstatus.PREFERENCES_UPDATED")
-		filter.addAction("com.dmcroww.genderstatus.DATA_UPDATED")
-		filter.addAction("com.dmcroww.genderstatus.DATA_FAILED")
-		filter.addAction("com.dmcroww.genderstatus.DATA_NOT_FOUND")
+		val filter = IntentFilter().apply {
+			addAction("com.dmcroww.genderstatus.PREFERENCES_UPDATED")
+			addAction("com.dmcroww.genderstatus.DATA_UPDATED")
+			addAction("com.dmcroww.genderstatus.DATA_FAILED")
+			addAction("com.dmcroww.genderstatus.DATA_NOT_FOUND")
+		}
 
 		registerReceiver(updateReceiver, filter)
-		// Read stored status, set theme, and set up intents
-		readStoredStatus()
-		Log.d("MAIN", "onResume()")
+		setTheme()
 	}
 
 	override fun onStop() {
@@ -92,77 +83,71 @@ class MainActivity: AppCompatActivity() {
 		super.onStop()
 	}
 
-	/**
-	 * Reads stored partner status from SharedPreferences and updates the UI elements.
-	 */
-	@SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-	private fun readStoredStatus() {
-		val genders: Array<String> = resources.getStringArray(R.array.genders_array)
-		val ages: Array<String> = resources.getStringArray(R.array.ages_array)
-
-		val partner = StorageManager.getPartner(applicationContext)
-
-		val delta = timestampToDelta(partner.timestamp)
-		val updated = timestampToDateTime(partner.timestamp)
-
-		setTheme()
-		lifecycleScope.launch {
-
-			val image = StorageManager.fetchImage(applicationContext, "avatars", partner.avatar)
-			if (image != null) {
-				findViewById<ImageView>(R.id.avatar).setImageBitmap(image)
-			} else {
-				findViewById<ImageView>(R.id.avatar).setImageDrawable(getDrawable(R.drawable.android_128))
-			}
-			if (appData.lastCacheTs < (System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS) && appData.username != "") {
-				val backgrounds = ApiClient.getData(applicationContext, "backgrounds")
-				(0 until backgrounds.length()).map {
-					StorageManager.fetchImage(applicationContext, "backgrounds", backgrounds.getString(it), true)
-				}
-				val avatars = ApiClient.getData(applicationContext, "avatars")
-				(0 until avatars.length()).map {
-					StorageManager.fetchImage(applicationContext, "avatars", avatars.getString(it), true)
-				}
-				appData.lastCacheTs = System.currentTimeMillis()
-				AppOptions.saveData(applicationContext, appData)
-			}
-
+	private inner class SubScreenPagerAdapter(fm: FragmentManager, private val usernames: Array<String>): FragmentPagerAdapter(fm) {
+		override fun getItem(position: Int): Fragment {
+			return SubScreenFragment.newInstance(usernames[position])
 		}
 
-		dataActivity.text = partner.activity
-		dataMood.text = partner.mood
-		dataAge.text = ages[partner.age]
-		dataSus.text = if (partner.sus > 0) "${(partner.sus - 1) * 10}%" else "..."
-		dataGender.text = genders[partner.gender]
-		dataDelta.text = delta
-		dataUpdated.text = "($updated)"
+		override fun getCount(): Int {
+			return usernames.size
+		}
 	}
 
-	/**
-	 * Converts a Unix timestamp to a formatted date and time string.
-	 */
-	private fun timestampToDateTime(unixTimestamp: Long): String {
-		return if (unixTimestamp > 0) SimpleDateFormat("HH:mm, dd.MM.yyyy", Locale.getDefault()).format(Date(unixTimestamp * 1000L))
-		else "..."
+	private fun continueSetup() {
+		appData = AppOptions(applicationContext)
+		storageManager = StorageManager(applicationContext)
+		userData = UserData(applicationContext)
+
+		notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+		notificationManager.createNotificationChannel(NotificationChannel("friends_update_channel", "Friends Status Updates", NotificationManager.IMPORTANCE_LOW))
+
+		setContentView(R.layout.act_main)
+
+		buttonPostStatus = findViewById(R.id.button_update)
+		buttonPreferences = findViewById(R.id.button_preferences)
+
+		startService(Intent(this, UpdateService::class.java))
+		buttonPostStatus.setOnClickListener {startActivity(Intent(this, PostStatusActivity::class.java))}
+		buttonPreferences.setOnClickListener {startActivity(Intent(this, PreferencesActivity::class.java))}
+
+		sendBroadcast(Intent("com.dmcroww.genderstatus.FORCE_UPDATE"))
+
+		lifecycleScope.launch {
+			if (appData.lastCacheTs < (System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS) && userData.username.isNotBlank()) {
+
+				val backgroundArray = apiClient.getArray("fetch backgrounds")
+				for (i in 0 until backgroundArray.length()) {
+					val filename = backgroundArray.optString(i)
+					storageManager.fetchBackground(filename, true)
+				}
+				val avatarArray = apiClient.getArray("fetch avatars")
+				for (i in 0 until avatarArray.length()) {
+					val filename = avatarArray.optString(i)
+					storageManager.fetchAvatar(filename, true)
+				}
+
+				appData.lastCacheTs = System.currentTimeMillis()
+				appData.save()
+			}
+		}
 	}
 
-	/**
-	 * Converts a Unix timestamp to a time difference to current time.
-	 */
-	private fun timestampToDelta(unixTimestamp: Long): String {
-		return if (unixTimestamp > 0) DateUtils.getRelativeTimeSpanString(unixTimestamp * 1000L, System.currentTimeMillis(), 60000L).toString()
-		else "..."
+	// Call this function whenever you want to refresh the ViewPager, such as in a broadcast receiver
+	private fun refreshViewPager() {
+		val viewPager: ViewPager = findViewById(R.id.Pager)
+		val adapter = SubScreenPagerAdapter(supportFragmentManager, userData.friends)
+		viewPager.adapter = adapter
 	}
 
 	/**
 	 * Sets the app's theme based on user preferences.
 	 */
 	private fun setTheme() {
-		appData = AppOptions.getData(applicationContext)
-		lifecycleScope.launch {
-			val backgroundImage = if (appData.background != "") StorageManager.fetchImage(applicationContext, "backgrounds", appData.background) else null
-			findViewById<ImageView>(R.id.backgroundImage).setImageBitmap(backgroundImage)
-		}
+		appData.load()
+		if (appData.background.isNotBlank())
+			lifecycleScope.launch {
+				findViewById<ImageView>(R.id.backgroundImage).setImageBitmap(storageManager.fetchBackground(appData.background))
+			}
 
 		// Determine default values based on system theme
 		val defaultBackgroundIdx = if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
@@ -177,51 +162,7 @@ class MainActivity: AppCompatActivity() {
 		backgroundArray.recycle()
 		colorsArray.recycle()
 
-		val titleActivity = findViewById<TextView>(R.id.title_activity)
-		val titleMood = findViewById<TextView>(R.id.title_mood)
-		val titleAge = findViewById<TextView>(R.id.title_age)
-		val titleSus = findViewById<TextView>(R.id.title_sus)
-		val titleGender = findViewById<TextView>(R.id.title_gender)
-		val titleUpdated = findViewById<TextView>(R.id.title_updated)
-
-		val bigSize = 32.0f * (appData.fontSize / 100.0f)
-		val medSize = 24.0f * (appData.fontSize / 100.0f)
-		val smallSize = 20.0f * (appData.fontSize / 100.0f)
-		val tinySize = 18.0f * (appData.fontSize / 100.0f)
-
-		titleActivity.setTextColor(finalColorIdx)
-		titleMood.setTextColor(finalColorIdx)
-		titleAge.setTextColor(finalColorIdx)
-		titleSus.setTextColor(finalColorIdx)
-		titleGender.setTextColor(finalColorIdx)
-		titleUpdated.setTextColor(finalColorIdx)
-		dataActivity.setTextColor(finalColorIdx)
-		dataMood.setTextColor(finalColorIdx)
-		dataAge.setTextColor(finalColorIdx)
-		dataSus.setTextColor(finalColorIdx)
-		dataGender.setTextColor(finalColorIdx)
-		dataDelta.setTextColor(finalColorIdx)
-		dataUpdated.setTextColor(finalColorIdx)
-
-		titleActivity.textSize = bigSize
-		titleMood.textSize = bigSize
-
-		dataActivity.textSize = medSize
-		dataMood.textSize = medSize
-
-		titleAge.textSize = smallSize
-		titleSus.textSize = smallSize
-		titleGender.textSize = smallSize
-		dataAge.textSize = smallSize
-		dataSus.textSize = smallSize
-		dataGender.textSize = smallSize
-
-		titleUpdated.textSize = smallSize
-		dataDelta.textSize = smallSize
-		dataUpdated.textSize = tinySize
-
-		buttonHistory.setColorFilter(finalColorIdx)
-		buttonUpdate.setColorFilter(finalColorIdx)
+		buttonPostStatus.setColorFilter(finalColorIdx)
 		buttonPreferences.setColorFilter(finalColorIdx)
 	}
 
@@ -230,24 +171,14 @@ class MainActivity: AppCompatActivity() {
 	 */
 	private val updateReceiver = object: BroadcastReceiver() {
 		override fun onReceive(context: Context, intent: Intent?) {
-			Log.d("Broadcast", intent.toString())
+			Log.d("Broadcast", intent?.action.toString())
 			when (intent?.action) {
 				"com.dmcroww.genderstatus.DATA_UPDATED" -> {
-					readStoredStatus()
+					refreshViewPager()
 				}
 
 				"com.dmcroww.genderstatus.PREFERENCES_UPDATED" -> {
 					setTheme()
-				}
-
-				"com.dmcroww.genderstatus.DATA_FAILED" -> {
-					startActivity(Intent(context, Preferences::class.java))
-					Toast.makeText(applicationContext, "Usernames empty or invalid.", Toast.LENGTH_LONG).show()
-				}
-
-				"com.dmcroww.genderstatus.DATA_NOT_FOUND" -> {
-					startActivity(Intent(context, Preferences::class.java))
-					Toast.makeText(applicationContext, "One of usernames doesn't exist!", Toast.LENGTH_LONG).show()
 				}
 			}
 		}

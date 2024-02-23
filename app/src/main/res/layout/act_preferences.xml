@@ -17,38 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/user_edittext"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:hint="Your username"
-        android:importantForAutofill="no"
-        android:inputType="text|textNoSuggestions"
-        android:textColorHint="?android:attr/textColorPrimaryNoDisable"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usernames_title"
-        tools:ignore="HardcodedText,VisualLintTextFieldSize" />
-
-    <EditText
-        android:id="@+id/partner_edittext"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Partner username"
-        android:importantForAutofill="no"
-        android:inputType="text|textNoSuggestions"
-        android:textColorHint="?android:attr/textColorPrimaryNoDisable"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/user_edittext"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/user_edittext"
-        app:layout_constraintTop_toBottomOf="@+id/user_edittext"
-        tools:ignore="HardcodedText,VisualLintTextFieldSize" />
-
     <TextView
         android:id="@+id/updateInt_title"
         android:layout_width="wrap_content"
@@ -58,7 +26,7 @@
         android:text="@string/titleUpdateInt"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partner_edittext" />
+        app:layout_constraintTop_toBottomOf="@+id/usernames_title" />
 
     <TextView
         android:id="@+id/updateInt_data"
