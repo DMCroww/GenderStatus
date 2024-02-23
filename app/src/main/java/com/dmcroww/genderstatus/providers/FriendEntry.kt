@@ -1,4 +1,4 @@
-package com.dmcroww.genderstatus
+package com.dmcroww.genderstatus.providers
 
 import android.content.Context
 import android.content.Intent
@@ -14,6 +14,10 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.dmcroww.genderstatus.FriendHistoryActivity
+import com.dmcroww.genderstatus.R
+import com.dmcroww.genderstatus.entities.AppOptions
+import com.dmcroww.genderstatus.entities.Person
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -21,12 +25,7 @@ import java.util.Locale
 
 class SubScreenFragment: Fragment() {
 	private lateinit var context: Context
-
-	val bigSize = 32.0f * (appData.fontSize / 100.0f)
-	val medSize = 24.0f * (appData.fontSize / 100.0f)
-	val smallSize = 20.0f * (appData.fontSize / 100.0f)
-	val tinySize = 18.0f * (appData.fontSize / 100.0f)
-
+	private lateinit var dataNickname: TextView
 	private lateinit var dataActivity: TextView
 	private lateinit var dataMood: TextView
 	private lateinit var dataAge: TextView
@@ -39,13 +38,10 @@ class SubScreenFragment: Fragment() {
 	private lateinit var username: String
 	private lateinit var appData: AppOptions
 
-	private val genders: Array<String> = resources.getStringArray(R.array.genders_array)
-	private val ages: Array<String> = resources.getStringArray(R.array.ages_array)
-
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
-			username = it.getString(ARG_USERNAME, "")
+			username = it.getString("username", "")
 		}
 	}
 
@@ -56,7 +52,7 @@ class SubScreenFragment: Fragment() {
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.friend_entry, container, false)
+		return inflater.inflate(R.layout.frag_friend_entry, container, false)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,6 +62,7 @@ class SubScreenFragment: Fragment() {
 
 		// Initialize UI elements
 
+		dataNickname = view.findViewById(R.id.nickname)
 		dataActivity = view.findViewById(R.id.dataActivity)
 		dataMood = view.findViewById(R.id.dataMood)
 		dataAge = view.findViewById(R.id.dataAge)
@@ -77,37 +74,40 @@ class SubScreenFragment: Fragment() {
 		buttonHistory = view.findViewById(R.id.button_history)
 
 		buttonHistory.setOnClickListener {
-			val intent = Intent(context, FriendHistory::class.java)
+			val intent = Intent(context, FriendHistoryActivity::class.java)
 			intent.putExtra("username", username)
 			startActivity(intent)
 		}
 		setTheme(view)
 
+		val genders: Array<String> = resources.getStringArray(R.array.genders_array)
+		val ages: Array<String> = resources.getStringArray(R.array.ages_array)
+
 		// Fetch data from SharedStorage based on the username
-		val personStatus = StorageManager(context).loadPerson(username).status
+		val person = Person(context, username)
+		person.load()
+
+		dataNickname.text = if (person.nickname.isNotBlank()) person.nickname else person.username
+		dataActivity.text = person.status.activity
+		dataMood.text = person.status.mood
+		dataAge.text = ages[person.status.age]
+		dataSus.text = if (person.status.sus > 0) "${(person.status.sus - 1) * 10}%" else "..."
+		dataGender.text = genders[person.status.gender]
+		dataDelta.text = timestampToDelta(person.status.timestamp)
+		dataUpdated.text = timestampToDateTime(person.status.timestamp)
 
 		lifecycleScope.launch {
-			val image = StorageManager(context).fetchImage("avatars", personStatus.avatar)
+			val image = StorageManager(context).fetchAvatar(person.status.avatar)
 			if (image != null) view.findViewById<ImageView>(R.id.avatar).setImageBitmap(image)
 			else view.findViewById<ImageView>(R.id.avatar).setImageDrawable(getDrawable(context, R.drawable.android_128))
-
-			dataActivity.text = personStatus.activity
-			dataMood.text = personStatus.mood
-			dataAge.text = ages[personStatus.age]
-			dataSus.text = if (personStatus.sus > 0) "${(personStatus.sus - 1) * 10}%" else "..."
-			dataGender.text = genders[personStatus.gender]
-			dataDelta.text = timestampToDelta(personStatus.timestamp)
-			dataUpdated.text = timestampToDateTime(personStatus.timestamp)
 		}
 	}
 
 	companion object {
-		private const val ARG_USERNAME = "username"
-
 		fun newInstance(username: String): SubScreenFragment {
 			val fragment = SubScreenFragment()
 			val args = Bundle()
-			args.putString(ARG_USERNAME, username)
+			args.putString("username", username)
 			fragment.arguments = args
 			return fragment
 		}
@@ -134,13 +134,16 @@ class SubScreenFragment: Fragment() {
 		val defaultBackgroundIdx = if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
 
 		// Use the default values if the selected values are 0 (indicating "Default")
-		val backgroundArray = resources.obtainTypedArray(R.array.background_sources)
-
 		val colorsArray = resources.obtainTypedArray(R.array.color_sources)
-		val finalColorIdx = if (appData.textColorInt == 0 || appData.background == "") colorsArray.getColor(defaultBackgroundIdx, 0) else appData.textColorInt
 
-		backgroundArray.recycle()
+		val finalColorIdx = if (appData.textColorInt == 0 || appData.background.isBlank()) colorsArray.getColor(defaultBackgroundIdx, 0) else appData.textColorInt
+
 		colorsArray.recycle()
+
+		val bigSize = 32.0f * (appData.fontSize / 100.0f)
+		val medSize = 24.0f * (appData.fontSize / 100.0f)
+		val smallSize = 20.0f * (appData.fontSize / 100.0f)
+		val tinySize = 18.0f * (appData.fontSize / 100.0f)
 
 		val titleActivity = view.findViewById<TextView>(R.id.title_activity)
 		val titleMood = view.findViewById<TextView>(R.id.title_mood)
@@ -149,6 +152,7 @@ class SubScreenFragment: Fragment() {
 		val titleGender = view.findViewById<TextView>(R.id.title_gender)
 		val titleUpdated = view.findViewById<TextView>(R.id.title_updated)
 
+		dataNickname.setTextColor(finalColorIdx)
 		titleActivity.setTextColor(finalColorIdx)
 		titleMood.setTextColor(finalColorIdx)
 		titleAge.setTextColor(finalColorIdx)

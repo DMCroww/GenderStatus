@@ -20,6 +20,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.lifecycleScope
+import com.dmcroww.genderstatus.entities.AppOptions
+import com.dmcroww.genderstatus.providers.ApiClient
+import com.dmcroww.genderstatus.providers.StorageManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,21 +32,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class FriendHistory: AppCompatActivity() {
-	private val storageManager = StorageManager(applicationContext)
-	private val appData = AppOptions(applicationContext)
-	private val apiClient = ApiClient(applicationContext)
+class FriendHistoryActivity: AppCompatActivity() {
+	private lateinit var storageManager: StorageManager
+	private lateinit var appData: AppOptions
+	private lateinit var apiClient: ApiClient
+	private lateinit var historyDataLayout: LinearLayout
 
-	private lateinit var username: String
-	private val genders: Array<String> = resources.getStringArray(R.array.genders_array)
-	private val ages: Array<String> = resources.getStringArray(R.array.ages_array)
-
-	private val bigSize = 20.0f * (appData.fontSize / 100.0f)
-	private val medSize = 20.0f * (appData.fontSize / 100.0f)
-	private val smallSize = 18.0f * (appData.fontSize / 100.0f)
-	private val tinySize = 16.0f * (appData.fontSize / 100.0f)
 	private var finalColorIdx: Int = 0
-	private var rotateAnimation = RotateAnimation(
+	private val rotateAnimation = RotateAnimation(
 		0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
 	).apply {
 		duration = 2000 // Set the duration of the rotation
@@ -61,8 +58,10 @@ class FriendHistory: AppCompatActivity() {
 	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.friend_history)
-		username = intent.getStringExtra("username")!!
+		storageManager = StorageManager(applicationContext)
+		appData = AppOptions(applicationContext)
+		apiClient = ApiClient(applicationContext)
+		setContentView(R.layout.act_friend_history)
 
 		// Register the receiver for the broadcast
 		val filter = IntentFilter("com.dmcroww.genderstatus.DATA_UPDATED")
@@ -74,13 +73,15 @@ class FriendHistory: AppCompatActivity() {
 
 	@OptIn(DelicateCoroutinesApi::class)
 	private fun initializeUI() {
+		loading()
+		historyDataLayout = findViewById(R.id.history_data)
+
 		val backgroundArray = resources.obtainTypedArray(R.array.background_sources)
 		val colorsArray = resources.obtainTypedArray(R.array.color_sources)
 
 		// Determine default values based on system theme
 		val defaultBackgroundIdx = if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
 
-		loading()
 
 		finalColorIdx = if (appData.textColorInt == 0 || appData.background == "") colorsArray.getColor(defaultBackgroundIdx, 0) else appData.textColorInt
 		findViewById<TextView>(R.id.title_history).setTextColor(finalColorIdx)
@@ -89,7 +90,7 @@ class FriendHistory: AppCompatActivity() {
 		findViewById<ConstraintLayout>(R.id.main).setBackgroundResource(backgroundArray.getResourceId(defaultBackgroundIdx, 0))
 
 		GlobalScope.launch(Dispatchers.IO) {
-			val backgroundImage = if (appData.background != "") storageManager.fetchImage("backgrounds", appData.background) else null
+			val backgroundImage = if (appData.background != "") storageManager.fetchBackground(appData.background) else null
 			runOnUiThread {
 				findViewById<ImageView>(R.id.backgroundImage).setImageBitmap(backgroundImage)
 			}
@@ -99,18 +100,13 @@ class FriendHistory: AppCompatActivity() {
 		colorsArray.recycle()
 	}
 
-	@OptIn(DelicateCoroutinesApi::class)
 	@SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
 	private fun refreshHistory() {
-		val historyDataLayout = findViewById<LinearLayout>(R.id.history_data)
 		historyDataLayout.removeAllViews()
 
-		GlobalScope.launch(Dispatchers.IO) {
+		lifecycleScope.launch {
 			try {
-				val history = apiClient.fetchFriendHistory(username)
-
-
-				historyDataLayout.removeAllViews()
+				val history = apiClient.fetchFriendHistory(intent.getStringExtra("username")!!)
 
 				// Check if the stored string is not null
 				if (history.isEmpty()) {
@@ -118,14 +114,22 @@ class FriendHistory: AppCompatActivity() {
 					loaded()
 				} else {
 					// Inflate the template layout for each entry
+
+					val genders = resources.getStringArray(R.array.genders_array)
+					val ages = resources.getStringArray(R.array.ages_array)
+					val bigSize = 20.0f * (appData.fontSize / 100.0f)
+					val medSize = 20.0f * (appData.fontSize / 100.0f)
+					val smallSize = 18.0f * (appData.fontSize / 100.0f)
+					val tinySize = 16.0f * (appData.fontSize / 100.0f)
+
 					for (i in 0 until history.size) {
 						val status = history.get(i)
 
-						val entryView = LayoutInflater.from(applicationContext).inflate(R.layout.history_entry, historyDataLayout, false)
+						val entryView = LayoutInflater.from(applicationContext).inflate(R.layout.frag_history_entry, historyDataLayout, false)
 
 						// Populate the entryView with data from historyObject
 
-						val image = storageManager.fetchImage("avatars", status.avatar)
+						val image = storageManager.fetchAvatar(status.avatar)
 						if (image != null) entryView.findViewById<ImageView>(R.id.avatar).setImageBitmap(image)
 						else entryView.findViewById<ImageView>(R.id.avatar).setImageDrawable(getDrawable(R.drawable.android_128))
 

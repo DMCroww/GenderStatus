@@ -18,10 +18,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.dmcroww.genderstatus.entities.UserData
+import com.dmcroww.genderstatus.providers.ApiClient
+import com.dmcroww.genderstatus.providers.StorageManager
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 
-class UpdateSelf: AppCompatActivity() {
+class PostStatusActivity: AppCompatActivity() {
 	private lateinit var avatarImage: ImageView
 	private lateinit var activityInput: EditText
 	private lateinit var moodInput: EditText
@@ -32,16 +35,21 @@ class UpdateSelf: AppCompatActivity() {
 	private lateinit var genderSlider: SeekBar
 	private lateinit var genderPreview: TextView
 	private lateinit var avatars: JSONArray
-	private lateinit var avatarsList: List<Bitmap?>
-	private lateinit var avatarsNames: List<String>
-	private var userData = UserData(applicationContext)
-	private val storageManager = StorageManager(applicationContext)
-	private val genders: Array<String> = resources.getStringArray(R.array.genders_array)
-	private val ages: Array<String> = resources.getStringArray(R.array.ages_array)
+	private var avatarsList: MutableList<Bitmap?> = mutableListOf()
+	private var avatarsNames: MutableList<String> = mutableListOf()
+	private lateinit var userData: UserData
+	private lateinit var storageManager: StorageManager
+	private lateinit var genders: Array<String>
+	private lateinit var ages: Array<String>
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.update_self)
+		userData = UserData(applicationContext)
+		storageManager = StorageManager(applicationContext)
+		genders = resources.getStringArray(R.array.genders_array)
+		ages = resources.getStringArray(R.array.ages_array)
+
+		setContentView(R.layout.act_update_self)
 
 		// Initialize UI elements
 		avatarImage = findViewById(R.id.avatar)
@@ -55,19 +63,18 @@ class UpdateSelf: AppCompatActivity() {
 		genderPreview = findViewById(R.id.gender_preview)
 
 		lifecycleScope.launch {
-			val image = storageManager.fetchImage("avatars", userData.status.avatar)
+			val image = storageManager.fetchAvatar(userData.status.avatar)
 			if (image != null) {
 				avatarImage.setImageBitmap(image)
 				findViewById<TextView>(R.id.avatar_hint).text = ""
-			} else {
-				Toast.makeText(this@UpdateSelf, "Failed to load image from cache", Toast.LENGTH_SHORT).show()
-			}
+			} else
+				Toast.makeText(this@PostStatusActivity, "Failed to load image from cache", Toast.LENGTH_SHORT).show()
 
 			avatars = ApiClient(applicationContext).getArray("fetch avatars")
-			avatarsList = listOf(avatars.let {
-				storageManager.fetchImage("avatars", it.toString())
-			})
-			avatarsNames = listOf(avatars.toString())
+			for (i in 0 until avatars.length()) {
+				avatarsList.add(storageManager.fetchAvatar(avatars.optString(i)))
+				avatarsNames.add(avatars.optString(i))
+			}
 		}
 
 		avatarImage.setOnClickListener {
@@ -86,10 +93,9 @@ class UpdateSelf: AppCompatActivity() {
 
 		setupSeekBarListeners()
 
-		val saveButton = findViewById<Button>(R.id.button_save)
-		saveButton.setOnClickListener {
-			userData.status.activity = activityInput.text.toString().trim()
-			userData.status.mood = moodInput.text.toString().trim()
+		findViewById<Button>(R.id.button_save).setOnClickListener {
+			userData.status.activity = activityInput.text.trim().toString()
+			userData.status.mood = moodInput.text.trim().toString()
 			userData.save()
 			lifecycleScope.launch {
 				ApiClient(applicationContext).postStatus()

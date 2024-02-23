@@ -10,27 +10,25 @@
     <string name="buttonSaveTitle">Save</string>
     <string name="buttonUpdateTitle">Edit own</string>
     <string name="title_app_settings">App Settings</string>
-    <string name="dark_theme">Dark Theme</string>
     <string name="background_title">Background:</string>
-    <string name="title_widget_settings">Widget Settings</string>
-    <string name="background_opacity">Background Opacity (%):</string>
     <string name="save">Save</string>
-    <string name="preferences">Preferences</string>
     <string name="titleUpdateInt">Update interval (minutes): </string>
     <string name="select_color">Text color:</string>
     <string name="hintAvatar">Tap me! -></string>
     <string name="titleUpdated">Last updated</string>
-
-    <!-- Preference Titles -->
-
-    <!-- Messages Preferences -->
-
-    <!-- Sync Preferences -->
     <string name="buttonHistoryTitle">History</string>
     <string name="titleFontSize">Font size:</string>
     <string name="colors_preview_title">■ Preview ■</string>
     <string name="avatar_desc">Avatar image</string>
     <string name="background_desc">Background Image</string>
-    <string name="partner_history_title">Partner History</string>
+    <string name="friend_history_title">Friend History</string>
     <string name="loader_animation">Loader Animation</string>
+    <string name="title_activity_login">Login</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_log_in">Log in</string>
+    <string name="invalid_username">Invalid username</string>
+    <string name="invalid_password">Invalid Password</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="nickname">Nickname</string>
 </resources>

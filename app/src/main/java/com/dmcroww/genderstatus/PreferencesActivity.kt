@@ -20,6 +20,10 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.dmcroww.genderstatus.entities.AppOptions
+import com.dmcroww.genderstatus.entities.UserData
+import com.dmcroww.genderstatus.providers.ApiClient
+import com.dmcroww.genderstatus.providers.StorageManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -29,17 +33,16 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
-class Preferences: AppCompatActivity() {
+class PreferencesActivity: AppCompatActivity() {
 	private lateinit var appData: AppOptions
 	private lateinit var userData: UserData
-	private lateinit var userInput: EditText
 	private lateinit var intervalView: TextView
 	private lateinit var updateIntBar: SeekBar
 	private lateinit var fontSizeView: TextView
 	private lateinit var fontSizeBar: SeekBar
 	private lateinit var backgrounds: JSONArray
-	private lateinit var backgroundsList: List<Bitmap?>
-	private lateinit var backgroundsNames: List<String>
+	private var backgroundsList: MutableList<Bitmap?> = mutableListOf()
+	private var backgroundsNames: MutableList<String> = mutableListOf()
 	private var backgroundsLoaded: Boolean = false
 	private lateinit var storageManager: StorageManager
 	private lateinit var apiClient: ApiClient
@@ -47,7 +50,7 @@ class Preferences: AppCompatActivity() {
 	@SuppressLint("SetTextI18n")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.preferences)
+		setContentView(R.layout.act_preferences)
 		// Initialize SharedPreferences
 		appData = AppOptions(applicationContext)
 		userData = UserData(applicationContext)
@@ -55,14 +58,12 @@ class Preferences: AppCompatActivity() {
 		apiClient = ApiClient(applicationContext)
 
 		// Initialize UI elements
-		userInput = findViewById(R.id.user_edittext)
 		updateIntBar = findViewById(R.id.updateInt_bar)
 		intervalView = findViewById(R.id.updateInt_data)
 		fontSizeBar = findViewById(R.id.fontsize_bar)
 		fontSizeView = findViewById(R.id.fontsize_data)
 
 		// Load saved preferences
-		userInput.setText(userData.username)
 		updateIntBar.progress = appData.updateInterval
 		intervalView.text = updateIntBar.progress.toString()
 		fontSizeBar.progress = appData.fontSize / 5
@@ -92,27 +93,29 @@ class Preferences: AppCompatActivity() {
 
 		lifecycleScope.launch {
 			backgrounds = apiClient.getArray("fetch backgrounds")
-			backgroundsList = listOf(backgrounds.let {
-				storageManager.fetchImage("backgrounds", it.toString())
-			})
-			backgroundsNames = listOf(backgrounds.toString())
+
+			for (i in 0 until backgrounds.length()) {
+				val filename = backgrounds.optString(i)
+				val img = storageManager.fetchBackground(filename)
+				backgroundsList.add(img)
+				backgroundsNames.add(filename)
+			}
 			backgroundsLoaded = true
 		}
 
 		// Save button click listener
 		val saveButton = findViewById<Button>(R.id.save_button)
 		saveButton.setOnClickListener {
-			appData.save()
-			GlobalScope.launch(Dispatchers.Main) {
-				try {
-					Toast.makeText(applicationContext, "Preferences saved", Toast.LENGTH_SHORT).show()
-					finish()
-					sendBroadcast(Intent("com.dmcroww.genderstatus.PREFERENCES_UPDATED"))
-				} catch (e: Exception) {
-					e.printStackTrace()
-					Toast.makeText(applicationContext, "Error saving preferences", Toast.LENGTH_SHORT).show()
-				}
+			try {
+				appData.save()
+				Toast.makeText(applicationContext, "Preferences saved", Toast.LENGTH_SHORT).show()
+				finish()
+				sendBroadcast(Intent("com.dmcroww.genderstatus.PREFERENCES_UPDATED"))
+			} catch (e: Exception) {
+				e.printStackTrace()
+				Toast.makeText(applicationContext, "Error saving preferences", Toast.LENGTH_SHORT).show()
 			}
+
 		}
 
 		// Background selection click listener

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FriendHistory">
+    tools:context=".FriendHistoryActivity">
 
     <ImageView
         android:id="@+id/backgroundImage"
@@ -31,7 +31,7 @@
         android:fontFamily="casual"
         android:shadowColor="#FF888888"
         android:shadowRadius="4"
-        android:text="@string/partner_history_title"
+        android:text="@string/friend_history_title"
         android:textAllCaps="false"
         android:textSize="40sp"
         android:textStyle="bold"

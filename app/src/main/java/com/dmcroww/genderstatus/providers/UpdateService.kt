@@ -1,15 +1,15 @@
-package com.dmcroww.genderstatus
+package com.dmcroww.genderstatus.providers
 
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import com.dmcroww.genderstatus.entities.AppOptions
+import com.dmcroww.genderstatus.entities.Person
+import com.dmcroww.genderstatus.entities.UserData
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,18 +22,16 @@ class UpdateService: Service() {
 	private var timer = Timer()
 	private var isServiceStarted = false
 
-	private val appData = AppOptions(applicationContext)
-	private val userData = UserData(applicationContext)
-	private val apiClient = ApiClient(applicationContext)
-
-	private val genders: Array<String> = resources.getStringArray(R.array.genders_array)
-	private val ages: Array<String> = resources.getStringArray(R.array.ages_array)
-	private val intent = Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-	private val notificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+	private lateinit var appData: AppOptions
 
 	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		if (!isUserLoggedIn()) {
+
+		appData = AppOptions(applicationContext)
+
+		val userData = UserData(applicationContext)
+
+		if (userData.username.isBlank() || userData.password.isBlank()) {
 			// User is not logged in, do not start the service
 			stopSelf()
 			return START_NOT_STICKY
@@ -48,10 +46,6 @@ class UpdateService: Service() {
 		}
 
 		return START_STICKY
-	}
-
-	private fun isUserLoggedIn(): Boolean {
-		return (userData.username.isNotBlank() && userData.password.isNotBlank())
 	}
 
 	override fun onBind(intent: Intent?): IBinder? = null
@@ -70,6 +64,7 @@ class UpdateService: Service() {
 	fun restartTimer() {
 		timer.cancel()
 		timer = Timer()
+		appData = AppOptions(applicationContext)
 		appData.load()
 		timer.scheduleAtFixedRate(UpdateTask(), 0L, appData.updateInterval * 60000L)
 	}
@@ -77,12 +72,14 @@ class UpdateService: Service() {
 	@OptIn(DelicateCoroutinesApi::class)
 	private fun fetchDataAndHandleUpdates() {
 		GlobalScope.launch(Dispatchers.Main) {
+			val apiClient = ApiClient(applicationContext)
 			val friends = apiClient.fetchFriends()
+			friends.entries.forEach {
+				val person = Person(applicationContext, it.key)
+				person.status = it.value
+				person.save()
+			}
 
-//
-//					val partnerHistory = ApiClient.getData(applicationContext, "history", appData.partner)
-//					StorageManager.savePartnerHistory(this@UpdateService, partnerHistory)
-//
 //				if (StorageManager.getPartner(applicationContext).timestamp != friends.timestamp) {
 //					StorageManager.savePartner(this@UpdateService, friends)
 //
@@ -91,33 +88,39 @@ class UpdateService: Service() {
 //				}
 		}
 	}
-
-	@SuppressLint("MissingPermission")
-	private fun notify(friend: Person) {
-		val status = friend.status
-		val activity = status.activity
-		val mood = status.mood
-		val gender = genders[status.gender]
-		val age = ages[status.age]
-		val sus = (status.sus - 1) * 10
-
-		val inboxStyle = NotificationCompat.InboxStyle()
-			.addLine("Mood: $mood")
-			.addLine("$gender, $age, $sus% sus")
-
-		val notificationBuilder = NotificationCompat.Builder(this, "friends_update_channel")
-			.setSmallIcon(R.drawable.android_dark_128)
-			.setPriority(2)
-			.setContentIntent(notificationIntent)
-			.setAutoCancel(true)
-			.setContentTitle(activity)
-			.setStyle(inboxStyle)
-
-
-		with(NotificationManagerCompat.from(this)) {
-			notify(0, notificationBuilder.build())
-		}
-	}
+//
+//	@SuppressLint("MissingPermission")
+//	private fun notify(friend: Person) {
+//		val genders: Array<String> = resources.getStringArray(R.array.genders_array)
+//		val ages: Array<String> = resources.getStringArray(R.array.ages_array)
+//
+//		val status = friend.status
+//		val activity = status.activity
+//		val mood = status.mood
+//		val gender = genders[status.gender]
+//		val age = ages[status.age]
+//		val sus = (status.sus - 1) * 10
+//
+//		val inboxStyle = NotificationCompat.InboxStyle()
+//			.addLine("Mood: $mood")
+//			.addLine("$gender, $age, $sus% sus")
+//
+//		val intent = Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//		val notificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+//
+//		val notificationBuilder = NotificationCompat.Builder(this, "friends_update_channel")
+//			.setSmallIcon(R.drawable.android_128)
+//			.setPriority(2)
+//			.setContentIntent(notificationIntent)
+//			.setAutoCancel(true)
+//			.setContentTitle(activity)
+//			.setStyle(inboxStyle)
+//
+//
+//		with(NotificationManagerCompat.from(this)) {
+//			notify(0, notificationBuilder.build())
+//		}
+//	}
 
 	private val updateReceiver = object: BroadcastReceiver() {
 		override fun onReceive(context: Context, intent: Intent?) {
