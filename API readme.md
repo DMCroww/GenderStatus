@@ -1,7 +1,7 @@
 # API Guide
 
 **Current URL of the API:**
-*https://api.dmcroww.live/genderStatus/v2/*
+*https://api.dmcroww.tech/genderStatus/v2/*
 
 ***Accepts only POST JSON requests***
 
@@ -18,18 +18,21 @@
 
 
 ## All possible properties of the user object:
+
 - 'username' : (string)
   - Unique ID of user
 - 'password' : (string)
-  - User's password 
+  - User's password
   - min 8, max 255 long
   - defaults to "123456789"
 - 'nick' : (string)
   - Display name
-- 'friends' : (array)
-  - String Array of all friends the user has added.
+- 'friends' : (array\<string\>)
+  - All unconfirmed friendrequests the user has set.
+- 'requests' : (array\<string\>)
+  - All friends the user has.
 - 'avatar' : (string)
-  - media URI ie: "avatar-1.png"
+  - media URI ie: "default\/avatar-1.png"
 - 'activity' : (string)
   - User's activity
 - 'mood' : (string)
@@ -38,7 +41,8 @@
   - 0 signifying "unset"
   - range 1-7
   - 1-7 should select in-app from predefined array `arrayIdx + 1`
-  - ie.: `["hyper-masc", "masculine", "neutral masc", "neutral", "neutral fem", "feminine", "hyper-fem"]`
+  -
+  ie.: `["hyper-masc", "masculine", "neutral masc", "neutral", "neutral fem", "feminine", "hyper-fem"]`
 - 'age' : (int)
   - 0 signifying "unset"
   - range 1-7
@@ -48,17 +52,20 @@
   - 0 signifying "unset"
   - range 1-11
   - 1-11 should be used to get % `(sus - 1) * 10`
+- 'visibleTo' : (array\<string\>)
+  - array of usernames of friends the status is visible to
 - 'timestamp' : (int)
   - UNIX timestamp (seconds) of last change
-- 'history' (array)
+- 'history' (array\<object\>)
   - Array of all previously set statuses of user
-  - each only includes following properties: `nick, avatar, activity, mood, gender, age, sus`
+  - each only includes following
+    properties: `nick, avatar, activity, mood, gender, age, sus, timestamp, visibleTo`
 
 # 0. LOGIN
 
 `'action' : 'login'`
 
-Returns current stored user activity on success,
+Returns current stored user activity on success without their history,
 401 on "user not found/bad password"
 
 ### `'fetch'` Examples:
