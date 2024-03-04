@@ -7,11 +7,11 @@
 # Account options
 
 - [ ] nickname change dialog
-  - [ ] add API action for this
+  - [x] add API action for this
   - [ ] use user specified nickname as default
 - [ ] password change dialog
 - [ ] show own history
-  - [ ] add API action for this
+  - [x] add API action for this
 - [ ] remove own history entry
   - [ ] add API action for this
 
