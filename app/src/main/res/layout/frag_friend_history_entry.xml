@@ -11,12 +11,12 @@
         android:layout_width="96dp"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:contentDescription="@string/avatar_desc"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:srcCompat="@drawable/android_128"
-        android:contentDescription="@string/avatar_desc" />
+        tools:srcCompat="@drawable/android_128" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"

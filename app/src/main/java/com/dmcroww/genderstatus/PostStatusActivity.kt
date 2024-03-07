@@ -70,7 +70,7 @@ class PostStatusActivity: AppCompatActivity() {
 			} else
 				Toast.makeText(this@PostStatusActivity, "Failed to load image from cache", Toast.LENGTH_SHORT).show()
 
-			avatars = ApiClient(applicationContext).getArray("fetch avatars")
+			avatars = ApiClient(applicationContext).getArray("get avatars")
 			for (i in 0 until avatars.length()) {
 				avatarsList.add(storageManager.fetchAvatar(avatars.optString(i)))
 				avatarsNames.add(avatars.optString(i))

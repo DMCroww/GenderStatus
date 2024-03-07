@@ -24,4 +24,8 @@ data class Status(val jsonObject: JSONObject) {
 			.put("gender", this.gender)
 			.put("timestamp", this.timestamp)
 	}
+
+	fun string(): String {
+		return this.json().toString()
+	}
 }

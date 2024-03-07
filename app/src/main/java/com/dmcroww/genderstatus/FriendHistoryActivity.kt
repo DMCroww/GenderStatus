@@ -122,10 +122,10 @@ class FriendHistoryActivity: AppCompatActivity() {
 					val smallSize = 18.0f * (appData.fontSize / 100.0f)
 					val tinySize = 16.0f * (appData.fontSize / 100.0f)
 
-					for (i in 0 until history.size) {
+					for (i in history.indices) {
 						val status = history.get(i)
 
-						val entryView = LayoutInflater.from(applicationContext).inflate(R.layout.frag_history_entry, historyDataLayout, false)
+						val entryView = LayoutInflater.from(applicationContext).inflate(R.layout.frag_friend_history_entry, historyDataLayout, false)
 
 						// Populate the entryView with data from historyObject
 
@@ -149,7 +149,7 @@ class FriendHistoryActivity: AppCompatActivity() {
 						dataDate.textSize = tinySize
 
 						val dataOther = entryView.findViewById<TextView>(R.id.other)
-						dataOther.text = "${genders[status.gender]} ${ages[status.age]}, ${(status.sus - 1) * 10}% sus"
+						dataOther.text = "${genders[status.gender]} ${ages[status.age]}, ${if (status.sus > 0) "${(status.sus - 1) * 10}%sus" else "..."}"
 						dataOther.setTextColor(finalColorIdx)
 						dataOther.textSize = smallSize
 

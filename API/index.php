@@ -28,7 +28,7 @@ function finish($success, $data, $code = 0): void {
  */
 function cleaner(array|object $data, array $propertyArr, bool $removeProperties = true) {
 	// Clone the original object to avoid modifying it directly
-	$cleaned = array(...$data);
+	$cleaned = (array) $data;
 
 	foreach ($cleaned as $property => $value)
 		if (
@@ -121,7 +121,7 @@ function setStatus() {
 	global $conn, $postData;
 	$status = (array) $postData->status;
 
-	if (count($status['visibleTo'])) {
+	if (isset($status['visibleTo']) && count($status['visibleTo'])) {
 		$visibleTo = $status['visibleTo'];
 		$status['visibleTo'] = "";
 		foreach ($$visibleTo as $key => $value)
@@ -129,25 +129,28 @@ function setStatus() {
 	} else
 		unset($status['visibleTo']);
 
+	unset($status['timestamp']);
+
 	// Get the table columns dynamically
 	$columns_query = mysqli_query($conn, "SHOW COLUMNS FROM statuses");
 	while ($row = mysqli_fetch_assoc($columns_query))
 		$table_columns[] = $row['Field'];
 
 	// Prepare the SQL statement
-	$keys = array('username');
-	$values = array($postData->username);
+	$keys = ['username', 'timestamp'];
+	$values = ["'$postData->username'", time()];
 	foreach ($status as $key => $value)
 		if (in_array($key, $table_columns)) {
-			$keys[] = "'$key'";
+			$keys[] = "$key";
 			$escaped = mysqli_real_escape_string($conn, $value);
 			$values[] = "'$escaped'";
 		}
 
 	$k = implode(', ', $keys);
 	$v = implode(', ', $values);
+	$q = "INSERT INTO statuses ($k) VALUES ($v)";
 
-	if (mysqli_query($conn, "INSERT INTO your_table ($k) VALUES ($v)") === false)
+	if (mysqli_query($conn, $q) === false)
 		finish(false, "Database error: " . mysqli_error($conn), 1);
 
 	finish(true, "Status updated.");
@@ -157,9 +160,9 @@ function setNickname() {
 	global $conn, $postData;
 
 	$u = $postData->username;
-	$newnick = trim(preg_replace("/\s+/", " ", $postData->nickname));
+	$newnick = isset($postData->newNick) ? trim(preg_replace("/\s+/", " ", $postData->newNick)) : $u;
 
-	if ($newnick == "")
+	if (!$newnick)
 		$newnick = $u;
 
 	if (strlen($newnick) > 255)
@@ -182,12 +185,12 @@ function setPassword() {
 	$newpass = $postData->newPass;
 
 	// check for simplicity and length
-	if ((bool) preg_match('/^(?=.*[[:alpha:]])(?=.*\d).+$/', $newpass) == false)
-		finish(false, "Password too simple.", 13);
 	if (strlen($newpass) > 255)
 		finish(false, "Password is too long. Max 255 characters.", 13);
 	if (strlen($newpass) < 8)
 		finish(false, "Password is too short. Min 8 characters.", 13);
+	if ((bool) preg_match('/^(?=.*[[:alpha:]])(?=.*\d).+$/', $newpass) == false)
+		finish(false, "Password too simple.", 13);
 
 	$p = mysqli_real_escape_string($conn, $newpass);
 	$u = mysqli_real_escape_string($conn, $username);
@@ -263,10 +266,10 @@ function getFriendHistory(bool $all = false) {
 
 	$u = $postData->username;
 	$f = $postData->friend;
-	$q = "SELECT * FROM genderStatuses WHERE username = $f AND (visibleTo LIKE '%|$u|%' OR visibleTo = '')";
+	$q = "SELECT * FROM statuses WHERE username = '$f' AND (visibleTo LIKE '%|$u|%' OR visibleTo = '')";
 
 	if (!$all)
-		$sql .= " LIMIT 30";
+		$q .= " LIMIT 30";
 
 	$result = mysqli_query($conn, $q);
 	if ($result === false)
@@ -336,8 +339,8 @@ function removeFriend() {
 	$username = $postData->username;
 	$friendUsername = $postData->friend;
 
-	$q1 = "UPDATE users SET friends = REPLACE(requests, '|$username|', ''), requests = REPLACE(requests, '|$username|', '') WHERE username = '$friendUsername'";
-	$q2 = "UPDATE users SET friends = REPLACE(requests, '|$friendUsername|', ''), requests = REPLACE(requests, '|$friendUsername|', '') WHERE username = '$username'";
+	$q1 = "UPDATE users SET friends = REPLACE(friends, '|$username|', ''), requests = REPLACE(requests, '|$username|', '') WHERE username = '$friendUsername'";
+	$q2 = "UPDATE users SET friends = REPLACE(friends, '|$friendUsername|', ''), requests = REPLACE(requests, '|$friendUsername|', '') WHERE username = '$username'";
 
 	if (mysqli_query($conn, $q1) === false || mysqli_query($conn, $q2) === false)
 		finish(false, "Database error.", 1);
@@ -394,7 +397,7 @@ $subaction = implode(" ", $actions);
 
 switch ($action) {
 	case 'login':
-		finish(true, $postData);
+		finish(true, cleaner($postData, ["username", "nickname", "friends", "requests"], false));
 
 	case 'get':
 		switch ($subaction) {

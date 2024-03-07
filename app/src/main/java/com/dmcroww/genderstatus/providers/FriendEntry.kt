@@ -2,6 +2,7 @@ package com.dmcroww.genderstatus.providers
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
 import android.text.format.DateUtils
@@ -11,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.dmcroww.genderstatus.FriendHistoryActivity
@@ -26,6 +26,7 @@ import java.util.Locale
 class SubScreenFragment: Fragment() {
 	private lateinit var context: Context
 	private lateinit var dataNickname: TextView
+	private lateinit var avatar: ImageView
 	private lateinit var dataActivity: TextView
 	private lateinit var dataMood: TextView
 	private lateinit var dataAge: TextView
@@ -63,6 +64,7 @@ class SubScreenFragment: Fragment() {
 		// Initialize UI elements
 
 		dataNickname = view.findViewById(R.id.nickname)
+		avatar = view.findViewById(R.id.avatar)
 		dataActivity = view.findViewById(R.id.dataActivity)
 		dataMood = view.findViewById(R.id.dataMood)
 		dataAge = view.findViewById(R.id.dataAge)
@@ -87,19 +89,23 @@ class SubScreenFragment: Fragment() {
 		val person = Person(context, username)
 		person.load()
 
-		dataNickname.text = if (person.nickname.isNotBlank()) person.nickname else person.username
-		dataActivity.text = person.status.activity
-		dataMood.text = person.status.mood
-		dataAge.text = ages[person.status.age]
-		dataSus.text = if (person.status.sus > 0) "${(person.status.sus - 1) * 10}%" else "..."
-		dataGender.text = genders[person.status.gender]
-		dataDelta.text = timestampToDelta(person.status.timestamp)
-		dataUpdated.text = timestampToDateTime(person.status.timestamp)
+		val status = person.status
+
+		dataNickname.text = if (person.displayName.isNotBlank()) person.displayName else if (person.nickname.isNotBlank()) person.nickname else username
+		dataActivity.text = status.activity
+		dataMood.text = status.mood
+		dataAge.text = ages[status.age]
+		dataSus.text = if (status.sus > 0) "${(status.sus - 1) * 10}%" else "..."
+		dataGender.text = genders[status.gender]
+		dataDelta.text = timestampToDelta(status.timestamp)
+		dataUpdated.text = timestampToDateTime(status.timestamp)
 
 		lifecycleScope.launch {
 			val image = StorageManager(context).fetchAvatar(person.status.avatar)
-			if (image != null) view.findViewById<ImageView>(R.id.avatar).setImageBitmap(image)
-			else view.findViewById<ImageView>(R.id.avatar).setImageDrawable(getDrawable(context, R.drawable.android_128))
+			if (image != null) {
+				avatar.setImageBitmap(image)
+				avatar.setBackgroundColor(0)
+			}
 		}
 	}
 
@@ -153,6 +159,7 @@ class SubScreenFragment: Fragment() {
 		val titleUpdated = view.findViewById<TextView>(R.id.title_updated)
 
 		dataNickname.setTextColor(finalColorIdx)
+		avatar.backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(finalColorIdx))
 		titleActivity.setTextColor(finalColorIdx)
 		titleMood.setTextColor(finalColorIdx)
 		titleAge.setTextColor(finalColorIdx)

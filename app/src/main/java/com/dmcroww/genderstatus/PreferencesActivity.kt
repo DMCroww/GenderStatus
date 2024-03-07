@@ -92,7 +92,7 @@ class PreferencesActivity: AppCompatActivity() {
 		})
 
 		lifecycleScope.launch {
-			backgrounds = apiClient.getArray("fetch backgrounds")
+			backgrounds = apiClient.getArray("get backgrounds")
 
 			for (i in 0 until backgrounds.length()) {
 				val filename = backgrounds.optString(i)

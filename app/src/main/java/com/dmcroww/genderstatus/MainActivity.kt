@@ -9,13 +9,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.Configuration
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -144,23 +142,11 @@ class MainActivity: AppCompatActivity() {
 	 */
 	private fun setTheme() {
 		appData.load()
-		if (appData.background.isNotBlank())
-			lifecycleScope.launch {
-				findViewById<ImageView>(R.id.backgroundImage).setImageBitmap(storageManager.fetchBackground(appData.background))
-			}
+		lifecycleScope.launch {
+			appData.setBackground(findViewById(R.id.main_window), findViewById(R.id.backgroundImage))
+		}
 
-		// Determine default values based on system theme
-		val defaultBackgroundIdx = if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
-
-		// Use the default values if the selected values are 0 (indicating "Default")
-		val backgroundArray = resources.obtainTypedArray(R.array.background_sources)
-		findViewById<ConstraintLayout>(R.id.main_window).setBackgroundResource(backgroundArray.getResourceId(defaultBackgroundIdx, 0))
-
-		val colorsArray = resources.obtainTypedArray(R.array.color_sources)
-		val finalColorIdx = if (appData.textColorInt == 0 || appData.background == "") colorsArray.getColor(defaultBackgroundIdx, 0) else appData.textColorInt
-
-		backgroundArray.recycle()
-		colorsArray.recycle()
+		val finalColorIdx = appData.getThemeColor()
 
 		buttonPostStatus.setColorFilter(finalColorIdx)
 		buttonPreferences.setColorFilter(finalColorIdx)

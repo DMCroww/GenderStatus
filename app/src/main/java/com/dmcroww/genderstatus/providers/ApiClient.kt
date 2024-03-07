@@ -24,11 +24,7 @@ class ApiClient(context: Context) {
 	private var username: String = userData.username
 	private var password: String = userData.password
 
-	fun login(
-		username: String = this.username,
-		password: String = this.password,
-		onComplete: (Boolean, String) -> Unit // Callback to handle login result
-	) {
+	fun login(username: String = this.username, password: String = this.password, onComplete: (Boolean, String) -> Unit) {
 		if (username.isBlank() || password.isBlank())
 			return onComplete(false, "User not logged in, login credentials empty.") // Notify the caller with the result
 
@@ -45,17 +41,13 @@ class ApiClient(context: Context) {
 				userData.username = username
 				userData.password = password
 
-				val friendList = mutableListOf<String>()
-				val friendsJSON = response.getJSONObject("data").getJSONArray("friends")
+				val friendsString = response.getJSONObject("data").getString("friends")
+				val requestsString = response.getJSONObject("data").getString("requests")
 
-				for (i in 0 until friendsJSON.length()) {
-					val element = friendsJSON.optString(i)
-					friendList.add(element)
-				}
-				userData.friends = friendList.toTypedArray()
-				Log.i("API", "Login successful.")
+				userData.friends = friendsString.split("|").filter {it.isNotBlank()}.toTypedArray()
+				userData.requests = requestsString.split("|").filter {it.isNotBlank()}.toTypedArray()
 			} else {
-				errorMessage = response.optString("error", "undefined")
+				errorMessage = response.optString("data", "undefined")
 
 				userData.username = ""
 				userData.password = ""
@@ -80,24 +72,13 @@ class ApiClient(context: Context) {
 		}
 	}
 
-// TODO: might not be needed after all?
-//	suspend fun getObject(action: String): JSONObject {
-//		return withContext(Dispatchers.IO) {
-//			val response = makeCall(action)
-//			if (response.optBoolean("success", false))
-//				response.getJSONObject("data")
-//			else JSONObject()
-//		}
-//	}
-
 	suspend fun fetchFriendHistory(friendUsername: String): List<Status> {
 		return withContext(Dispatchers.IO) {
 			val list = mutableListOf<Status>()
-			val response = makeCall("fetch friend history", JSONObject().put("friend", friendUsername))
+			val response = makeCall("get friend history", JSONObject().put("friend", friendUsername))
 			if (response.optBoolean("success", false)) {
 
 				val data = response.getJSONArray("data")
-				Log.d("API", data.toString())
 				for (i in 0 until data.length())
 					list.add(Status(data.getJSONObject(i)))
 			}
@@ -105,32 +86,39 @@ class ApiClient(context: Context) {
 		}
 	}
 
-	suspend fun fetchFriends(): Map<String, Status> {
+	suspend fun fetchFriends(): Map<String, JSONObject> {
 		return withContext(Dispatchers.IO) {
-			val list = mutableMapOf<String, Status>()
-			val response = makeCall("fetch friends")
+			val list = mutableMapOf<String, JSONObject>()
+			val response = makeCall("get friends")
 			if (response.optBoolean("success", false)) {
 				val data = response.getJSONArray("data")
+
 				for (i in 0 until data.length()) {
 					val obj = data.getJSONObject(i)
 					val username = obj.getString("username")
-					list[username] = Status(obj)
+					list[username] = obj
 				}
 			}
 			list
 		}
 	}
 
-	suspend fun postStatus() {
+	suspend fun postStatus(): JSONObject {
 		userData.load()
-		withContext(Dispatchers.IO) {
-			val jsonObject = JSONObject()
-			for (field in Status::class.java.declaredFields) {
-				field.isAccessible = true
-				jsonObject.put(field.name, field.get(userData.status))
-			}
-			Log.d("API", jsonObject.toString())
-			makeCall("post status", jsonObject)
+		return withContext(Dispatchers.IO) {
+			makeCall("post status", JSONObject().put("status", userData.status.json()))
+		}
+	}
+
+	suspend fun addFriend(username: String): JSONObject {
+		return withContext(Dispatchers.IO) {
+			makeCall("post friend add", JSONObject().put("friend", username))
+		}
+	}
+
+	suspend fun removeFriend(username: String): JSONObject {
+		return withContext(Dispatchers.IO) {
+			makeCall("post friend remove", JSONObject().put("friend", username))
 		}
 	}
 
@@ -142,7 +130,7 @@ class ApiClient(context: Context) {
 				data.put("password", password)
 
 			data.put("action", action)
-			Log.d("API", data.toString())
+			Log.d("API call", data.toString())
 
 			val url = URL(apiUrl)
 			val connection = url.openConnection() as HttpURLConnection
@@ -164,20 +152,19 @@ class ApiClient(context: Context) {
 				val reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
 				val responseStringBuilder = StringBuilder()
 				var line: String?
-				while (reader.readLine().also {line = it} != null) {
+				while (reader.readLine().also {line = it} != null)
 					responseStringBuilder.append(line).append("\n")
-				}
+
 				reader.close()
 				inputStream.close()
+				val result = responseStringBuilder.toString()
+				Log.d("API response", result)
 
-				return@withContext JSONObject(responseStringBuilder.toString())
+				return@withContext JSONObject(result)
 			} catch (e: Exception) {
 				// Handle exceptions if needed
 				e.printStackTrace()
-				val errorJson = JSONObject()
-				errorJson.put("success", false)
-				errorJson.put("error", "Failed to make HTTP request: ${e.message}")
-				return@withContext errorJson
+				return@withContext JSONObject().put("success", false).put("error", "Failed to make HTTP request: ${e.message}")
 			} finally {
 				connection.disconnect()
 			}

@@ -31,4 +31,7 @@
     <string name="invalid_password">Invalid Password</string>
     <string name="login_failed">"Login failed"</string>
     <string name="nickname">Nickname</string>
+    <string name="add_friend_username">Friend\'s username</string>
+    <string name="edit_nickname">Edit nickname</string>
+    <string name="remove_friend">Remove friend</string>
 </resources>
