@@ -60,7 +60,7 @@ function debugLog(string|object|array $input) {
 	$data = json_encode($input);
 	$logEntry = "$timestamp\n$time\n$data";
 
-	// Check if the log file for the client exists, 
+	// Check if the log file for the client exists,
 	// append if does, create new one if it doesnt.
 	if (file_exists("./log/$ip.json"))
 		fwrite(fopen("./log/$ip.json", "a+"), "\n\n$logEntry");
@@ -70,7 +70,7 @@ function debugLog(string|object|array $input) {
 
 /**
  * **Process incoming request and verify user login info**
- * 
+ *
  * Processes incoming POST requests, validates JSON format, and extracts required properties.
  * This function checks if the request method is POST and processes the incoming JSON data. Validates required properties 'username', 'password', and 'action'. If any validation fails, it terminates script execution with an appropriate error message.
  *
@@ -156,8 +156,11 @@ function setStatus() {
 function setNickname() {
 	global $conn, $postData;
 
-	$username = $postData->username;
+	$u = $postData->username;
 	$newnick = trim(preg_replace("/\s+/", " ", $postData->nickname));
+
+	if ($newnick == "")
+		$newnick = $u;
 
 	if (strlen($newnick) > 255)
 		finish(false, "Nickname is too long.", 13);
@@ -165,7 +168,6 @@ function setNickname() {
 		finish(false, "Nickname is too short.", 13);
 
 	$n = mysqli_real_escape_string($conn, $newnick);
-	$u = mysqli_real_escape_string($conn, $username);
 
 	if (mysqli_query($conn, "UPDATE users SET nickname = '$n' WHERE username = '$u'") === false)
 		finish(false, "Database error: " . mysqli_error($conn), 1);
@@ -226,7 +228,7 @@ function getFriends() {
 	global $conn, $postData;
 	$u = $postData->username;
 	$q = "SELECT s.* FROM (
-       SELECT s.*, ROW_NUMBER() 
+       SELECT s.*, ROW_NUMBER()
        OVER (PARTITION BY s.username ORDER BY s.id DESC) AS row_num
         FROM statuses s WHERE s.visibleTo = '' OR s.visibleTo LIKE '%|$u|%'
       ) AS s JOIN (
