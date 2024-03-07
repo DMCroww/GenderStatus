@@ -208,7 +208,16 @@ function getStatus(int $limit) {
 	finish(true, mysqli_fetch_all($result, MYSQLI_ASSOC));
 }
 
+function removeStatus(int $id) {
+	global $conn, $postData;
+	$id = $postData->id;
 
+	$sql = "DELETE FROM statuses WHERE id = $id";
+	$result = mysqli_query($conn, $sql);
+	if ($result === false)
+		finish(false, "Database error: " . mysqli_error($conn), 1);
+	finish(true, "Status removed.");
+}
 /**
  * Function to get the last status of each friend that is visible to the user
  * @return void
@@ -419,6 +428,9 @@ switch ($action) {
 		switch ($subaction) {
 			case 'status':
 				setStatus();
+
+			case 'status delete':
+				removeStatus(100);
 
 			case 'friend add':
 				addFriend();
