@@ -16,19 +16,21 @@
 #### Help screen:
 
 - [ ] create a help screen/menu
-  - [ ] General usage help
-  - [ ] Requesting custom avatars
-  - [ ] FAQ list
-  - [ ] Changelog / update notes
+
+- [ ] General usage help
+- [ ] Requesting custom avatars
+- [ ] FAQ list
+- [ ] Changelog / update notes
 
 # API stuff:
 
 #### Main API functionality:
-- [ ] friend request/add/remove
-- [ ] own nickname change<br>use username as default
-- [ ] password change
-- [ ] show own history
-- [ ] remove own history entry
+
+- [x] friend request/add/remove
+- [x] own nickname change<br>use username as default
+- [x] password change
+- [x] show own history
+- [x] remove own history entry
 
 #### Secondary calls (public?):
 - [ ] Add API call to handle retrieval of help files
@@ -36,9 +38,13 @@
 
 # Other / Ideas:
 
+- [ ] Per-friend backgrounds/colors?
 - [ ] Add default avatars
 - [ ] MOOORE BACKGROUNDS
 
-## Possible future features
+#### Possible future features:
 
 - [ ] in-app registration using email?
+- [ ] custom avatar upload?
+- [ ] 7tv emotes?
+- [ ] append status with media (image/video/link to a song)?
