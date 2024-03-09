@@ -2,14 +2,16 @@
 
 ### MAIN
 
-- [ ] Make menu be on the bottom of main screen
+- [x] Make menu be on the bottom of main screen
 - [ ] Add "about me" entry to db and user's screen
+- [ ] Add own profile activity
 
 #### Friends management:
 
 - [ ] friend request/add dialog?
-- [ ] friend nickname editing dialog
+- [x] friend nickname editing dialog
 - [ ] remove friend dialog
+- [ ] make history "lazy-loaded"
 
 #### Account options:
 
@@ -37,6 +39,7 @@
 - [x] show own history
 - [x] remove own history entry
 - [ ] add "about me" column and action to API
+- [ ] change history loading to accept "pagination" of sorts
 
 #### Secondary calls (public?):
 - [ ] Add API call to handle retrieval of help files
