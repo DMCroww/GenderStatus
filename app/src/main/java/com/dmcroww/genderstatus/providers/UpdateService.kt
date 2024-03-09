@@ -96,7 +96,7 @@ class UpdateService: Service() {
 
 			// Iterate through friends, updating and notifying when necessary
 			friends.forEach {(key, obj) ->
-				val person = Person(applicationContext, key).apply {
+				Person(applicationContext, key).apply {
 					load()
 					val newStatus = Status(obj.optJSONObject("status") ?: JSONObject())
 					val newNick = obj.getString("nickname")

@@ -25,11 +25,12 @@
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".FriendHistoryActivity"
+            android:name=".FriendProfileActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/Theme.Material3.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

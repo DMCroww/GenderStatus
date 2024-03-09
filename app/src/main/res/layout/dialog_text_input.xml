@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/inputText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints=""
@@ -14,7 +14,7 @@
         android:paddingHorizontal="16dp"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:text="@string/add_friend_username"
+        android:text="@string/empty"
         android:textSize="24sp"
         tools:ignore="LabelFor,TouchTargetSizeCheck" />
 

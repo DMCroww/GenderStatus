@@ -37,6 +37,7 @@ class MainActivity: AppCompatActivity() {
 	private lateinit var buttonPostStatus: ImageButton
 	private lateinit var buttonPreferences: ImageButton
 	private lateinit var notificationManager: NotificationManager
+	private lateinit var friendsList: Array<String>
 
 	@SuppressLint("UnspecifiedRegisterReceiverFlag")
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,8 +133,10 @@ class MainActivity: AppCompatActivity() {
 
 	// Call this function whenever you want to refresh the ViewPager, such as in a broadcast receiver
 	private fun refreshViewPager() {
+		userData.load()
+		friendsList = userData.friends
 		val viewPager: ViewPager = findViewById(R.id.Pager)
-		val adapter = SubScreenPagerAdapter(supportFragmentManager, userData.friends)
+		val adapter = SubScreenPagerAdapter(supportFragmentManager, friendsList)
 		viewPager.adapter = adapter
 	}
 
@@ -146,7 +149,7 @@ class MainActivity: AppCompatActivity() {
 			appData.setBackground(findViewById(R.id.main_window), findViewById(R.id.backgroundImage))
 		}
 
-		val finalColorIdx = appData.getThemeColor()
+		val finalColorIdx = appData.finalColorIdx
 
 		buttonPostStatus.setColorFilter(finalColorIdx)
 		buttonPreferences.setColorFilter(finalColorIdx)
@@ -160,7 +163,9 @@ class MainActivity: AppCompatActivity() {
 			Log.d("Broadcast", intent?.action.toString())
 			when (intent?.action) {
 				"com.dmcroww.genderstatus.DATA_UPDATED" -> {
-					refreshViewPager()
+					userData.load()
+					if (!(friendsList.sortedArray() contentEquals userData.friends.sortedArray()))
+						refreshViewPager()
 				}
 
 				"com.dmcroww.genderstatus.PREFERENCES_UPDATED" -> {

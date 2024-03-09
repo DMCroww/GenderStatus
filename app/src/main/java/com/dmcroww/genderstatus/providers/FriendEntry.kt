@@ -1,20 +1,21 @@
 package com.dmcroww.genderstatus.providers
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.os.Bundle
+import android.text.InputType
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.dmcroww.genderstatus.FriendHistoryActivity
+import com.dmcroww.genderstatus.FriendProfileActivity
 import com.dmcroww.genderstatus.R
 import com.dmcroww.genderstatus.entities.AppOptions
 import com.dmcroww.genderstatus.entities.Person
@@ -25,19 +26,21 @@ import java.util.Locale
 
 class SubScreenFragment: Fragment() {
 	private lateinit var context: Context
-	private lateinit var dataNickname: TextView
-	private lateinit var avatar: ImageView
-	private lateinit var dataActivity: TextView
-	private lateinit var dataMood: TextView
-	private lateinit var dataAge: TextView
-	private lateinit var dataSus: TextView
-	private lateinit var dataGender: TextView
-	private lateinit var dataDelta: TextView
-	private lateinit var dataUpdated: TextView
-	private lateinit var buttonHistory: ImageButton
+	private lateinit var storageManager: StorageManager
+	private lateinit var appData: AppOptions
+	private lateinit var apiClient: ApiClient
+
+	private lateinit var genders: Array<String>
+	private lateinit var ages: Array<String>
+
+	private var bigSize = 1f
+	private var medSize = 1f
+	private var smallSize = 1f
+	private var tinySize = 1f
 
 	private lateinit var username: String
-	private lateinit var appData: AppOptions
+
+	private lateinit var person: Person
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -61,52 +64,22 @@ class SubScreenFragment: Fragment() {
 		val context = requireContext().applicationContext
 		appData = AppOptions(context)
 
-		// Initialize UI elements
 
-		dataNickname = view.findViewById(R.id.nickname)
-		avatar = view.findViewById(R.id.avatar)
-		dataActivity = view.findViewById(R.id.dataActivity)
-		dataMood = view.findViewById(R.id.dataMood)
-		dataAge = view.findViewById(R.id.dataAge)
-		dataSus = view.findViewById(R.id.dataSus)
-		dataGender = view.findViewById(R.id.dataGender)
-		dataDelta = view.findViewById(R.id.dataDelta)
-		dataUpdated = view.findViewById(R.id.dataUpdated)
+		storageManager = StorageManager(context)
+		appData = AppOptions(context)
+		apiClient = ApiClient(context)
+		genders = resources.getStringArray(R.array.genders_array)
+		ages = resources.getStringArray(R.array.ages_array)
 
-		buttonHistory = view.findViewById(R.id.button_history)
+		bigSize = 20.0f * appData.fontSize
+		medSize = 20.0f * appData.fontSize
+		smallSize = 18.0f * appData.fontSize
+		tinySize = 16.0f * appData.fontSize
 
-		buttonHistory.setOnClickListener {
-			val intent = Intent(context, FriendHistoryActivity::class.java)
-			intent.putExtra("username", username)
-			startActivity(intent)
-		}
-		setTheme(view)
-
-		val genders: Array<String> = resources.getStringArray(R.array.genders_array)
-		val ages: Array<String> = resources.getStringArray(R.array.ages_array)
-
-		// Fetch data from SharedStorage based on the username
-		val person = Person(context, username)
+		person = Person(context, username)
 		person.load()
 
-		val status = person.status
-
-		dataNickname.text = if (person.displayName.isNotBlank()) person.displayName else if (person.nickname.isNotBlank()) person.nickname else username
-		dataActivity.text = status.activity
-		dataMood.text = status.mood
-		dataAge.text = ages[status.age]
-		dataSus.text = if (status.sus > 0) "${(status.sus - 1) * 10}%" else "..."
-		dataGender.text = genders[status.gender]
-		dataDelta.text = timestampToDelta(status.timestamp)
-		dataUpdated.text = timestampToDateTime(status.timestamp)
-
-		lifecycleScope.launch {
-			val image = StorageManager(context).fetchAvatar(person.status.avatar)
-			if (image != null) {
-				avatar.setImageBitmap(image)
-				avatar.setBackgroundColor(0)
-			}
-		}
+		populateData(view)
 	}
 
 	companion object {
@@ -119,78 +92,88 @@ class SubScreenFragment: Fragment() {
 		}
 	}
 
-	/**
-	 * Converts a Unix timestamp to a formatted date and time string.
-	 */
-	private fun timestampToDateTime(unixTimestamp: Long): String {
-		return if (unixTimestamp > 0) "(" + SimpleDateFormat("HH:mm, dd.MM.yyyy", Locale.getDefault()).format(Date(unixTimestamp * 1000L)) + ")"
-		else "..."
+	private fun populateData(view: View) {
+		val status = person.status
+
+		view.findViewById<TextView>(R.id.nickname).apply {
+			setTextColor(appData.finalColorIdx)
+			textSize = bigSize
+			text = if (person.displayName.isNotBlank()) person.displayName else if (person.nickname.isNotBlank()) person.nickname else username
+			setOnClickListener {
+				startActivity(Intent(context, FriendProfileActivity::class.java).putExtra("username", username))
+			}
+//			setOnClickListener {
+//				showTextInputDialog("Change Displayed Name", "Input new Display name for user @$username") {
+//					person.displayName = it
+//					person.save()
+//					context.sendBroadcast(Intent("com.dmcroww.genderstatus.DATA_UPDATED"))
+//				}
+//			}
+		}
+
+		view.findViewById<TextView>(R.id.title_activity).apply {
+			setTextColor(appData.finalColorIdx)
+			textSize = bigSize
+		}
+		view.findViewById<TextView>(R.id.dataActivity).apply {
+			setTextColor(appData.finalColorIdx)
+			textSize = medSize
+			text = status.activity
+		}
+		view.findViewById<TextView>(R.id.title_mood).apply {
+			setTextColor(appData.finalColorIdx)
+			textSize = bigSize
+		}
+		view.findViewById<TextView>(R.id.dataMood).apply {
+			setTextColor(appData.finalColorIdx)
+			textSize = medSize
+			text = status.mood
+		}
+		view.findViewById<TextView>(R.id.dataUpdated).apply {
+			setTextColor(appData.finalColorIdx)
+			textSize = tinySize
+			text = getString(R.string.titleUpdated, timestampToRelativePlus(status.timestamp))
+		}
+
+
+		lifecycleScope.launch {
+			val image = StorageManager(context).fetchAvatar(status.avatar)
+			view.findViewById<ImageView>(R.id.avatar).apply {
+				backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(appData.finalColorIdx))
+				if (image != null) {
+					setImageBitmap(image)
+					setBackgroundColor(0)
+				}
+			}
+		}
 	}
 
-	/**
-	 * Converts a Unix timestamp to a time difference to current time.
-	 */
-	private fun timestampToDelta(unixTimestamp: Long): String {
-		return if (unixTimestamp > 0) DateUtils.getRelativeTimeSpanString(unixTimestamp * 1000L, System.currentTimeMillis(), 60000L).toString()
-		else "..."
+	private fun timestampToRelativePlus(unixTimestamp: Long): String {
+		val timestamp = unixTimestamp * 1000L
+		val relative = DateUtils.getRelativeTimeSpanString(timestamp, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS).toString()
+
+		val dateFormat = SimpleDateFormat("HH:mm, dd.MM.yyyy", Locale.getDefault()).format(Date(timestamp))
+		return "$relative ($dateFormat)"
 	}
 
-	private fun setTheme(view: View) {
-		// Determine default values based on system theme
-		val defaultBackgroundIdx = if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
+	fun showTextInputDialog(title: String, message: String, isPassword: Boolean = false, callback: (String) -> Unit) {
+		val dialogView = layoutInflater.inflate(R.layout.dialog_text_input, null)
+		val editText = dialogView.findViewById<EditText>(R.id.inputText)
+		editText.setText("")
+		if (isPassword) editText.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
 
-		// Use the default values if the selected values are 0 (indicating "Default")
-		val colorsArray = resources.obtainTypedArray(R.array.color_sources)
-
-		val finalColorIdx = if (appData.textColorInt == 0 || appData.background.isBlank()) colorsArray.getColor(defaultBackgroundIdx, 0) else appData.textColorInt
-
-		colorsArray.recycle()
-
-		val bigSize = 32.0f * (appData.fontSize / 100.0f)
-		val medSize = 24.0f * (appData.fontSize / 100.0f)
-		val smallSize = 20.0f * (appData.fontSize / 100.0f)
-		val tinySize = 18.0f * (appData.fontSize / 100.0f)
-
-		val titleActivity = view.findViewById<TextView>(R.id.title_activity)
-		val titleMood = view.findViewById<TextView>(R.id.title_mood)
-		val titleAge = view.findViewById<TextView>(R.id.title_age)
-		val titleSus = view.findViewById<TextView>(R.id.title_sus)
-		val titleGender = view.findViewById<TextView>(R.id.title_gender)
-		val titleUpdated = view.findViewById<TextView>(R.id.title_updated)
-
-		dataNickname.setTextColor(finalColorIdx)
-		avatar.backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(finalColorIdx))
-		titleActivity.setTextColor(finalColorIdx)
-		titleMood.setTextColor(finalColorIdx)
-		titleAge.setTextColor(finalColorIdx)
-		titleSus.setTextColor(finalColorIdx)
-		titleGender.setTextColor(finalColorIdx)
-		titleUpdated.setTextColor(finalColorIdx)
-		dataActivity.setTextColor(finalColorIdx)
-		dataMood.setTextColor(finalColorIdx)
-		dataAge.setTextColor(finalColorIdx)
-		dataSus.setTextColor(finalColorIdx)
-		dataGender.setTextColor(finalColorIdx)
-		dataDelta.setTextColor(finalColorIdx)
-		dataUpdated.setTextColor(finalColorIdx)
-
-		titleActivity.textSize = bigSize
-		titleMood.textSize = bigSize
-
-		dataActivity.textSize = medSize
-		dataMood.textSize = medSize
-
-		titleAge.textSize = smallSize
-		titleSus.textSize = smallSize
-		titleGender.textSize = smallSize
-		dataAge.textSize = smallSize
-		dataSus.textSize = smallSize
-		dataGender.textSize = smallSize
-
-		titleUpdated.textSize = smallSize
-		dataDelta.textSize = smallSize
-		dataUpdated.textSize = tinySize
-
-		buttonHistory.setColorFilter(finalColorIdx)
+		val dialog = AlertDialog.Builder(context)
+			.setTitle(title)
+			.setMessage(message)
+			.setView(dialogView)
+			.setNegativeButton("Cancel") {dialog, _ ->
+				dialog.dismiss()
+			}
+			.setPositiveButton("Save") {dialog, _ ->
+				callback(editText.text.toString())
+				dialog.dismiss()
+			}
+			.create()
+		dialog.show()
 	}
 }

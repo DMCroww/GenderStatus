@@ -12,16 +12,24 @@ data class AppOptions(private val context: Context) {
 	var background: String = storage.getString("background", "")!!
 	var textColorInt: Int = storage.getInt("color", 0)
 	var updateInterval: Int = storage.getInt("updateInterval", 10)
-	var fontSize: Int = storage.getInt("fontSize", 100)
+	var fontSize: Float = storage.getFloat("fontSize", 1.0f)
 	var lastCacheTs: Long = storage.getLong("lastCacheTs", 0L)
 	var debugToasts: Boolean = storage.getBoolean("debugToasts", false)
+	var finalColorIdx: Int = 0
+
+	init {
+		val defaultBackgroundIdx = if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
+		val colorsArray = context.resources.obtainTypedArray(R.array.color_sources)
+		this.finalColorIdx = if (this.textColorInt == 0 || this.background == "") colorsArray.getColor(defaultBackgroundIdx, 0) else this.textColorInt
+		colorsArray.recycle()
+	}
 
 	fun save() {
 		storage.edit()
 			.putString("background", this.background)
 			.putInt("color", this.textColorInt)
 			.putInt("updateInterval", this.updateInterval)
-			.putInt("fontSize", this.fontSize)
+			.putFloat("fontSize", this.fontSize)
 			.putLong("lastCacheTs", this.lastCacheTs)
 			.putBoolean("debugToasts", this.debugToasts)
 			.apply()
@@ -31,7 +39,7 @@ data class AppOptions(private val context: Context) {
 		this.background = storage.getString("background", "")!!
 		this.textColorInt = storage.getInt("color", 0)
 		this.updateInterval = storage.getInt("updateInterval", 10)
-		this.fontSize = storage.getInt("fontSize", 100)
+		this.fontSize = storage.getFloat("fontSize", 1.0f)
 		this.lastCacheTs = storage.getLong("lastCacheTs", 0L)
 		this.debugToasts = storage.getBoolean("debugToasts", false)
 	}
@@ -46,16 +54,5 @@ data class AppOptions(private val context: Context) {
 		backgroundArray.recycle()
 
 		if (this.background.isNotBlank()) backgroundImageElement.setImageBitmap(StorageManager(context).fetchBackground(this.background))
-	}
-
-	fun getThemeColor(): Int {
-		load()
-		val defaultBackgroundIdx = if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
-
-		val colorsArray = context.resources.obtainTypedArray(R.array.color_sources)
-		val finalColorIdx = if (this.textColorInt == 0 || this.background == "") colorsArray.getColor(defaultBackgroundIdx, 0) else this.textColorInt
-
-		colorsArray.recycle()
-		return finalColorIdx
 	}
 }

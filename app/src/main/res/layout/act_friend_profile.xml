@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.75"
+        android:contentDescription="@string/background_desc"
+        android:defaultFocusHighlightEnabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:focusedByDefault="false"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:shadowColor="#888888"
+        android:text="@string/nickname"
+        android:textColor="@color/foreground"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/button_editDisplayName"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/button_editDisplayName"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/buttonHistoryTitle"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/nickname"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/nickname"
+        app:layout_constraintTop_toTopOf="@+id/nickname"
+        app:srcCompat="@drawable/edit_48"
+        app:tint="@color/foreground" />
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:alpha="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nickname">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp">
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:background="@drawable/android_128"
+                android:contentDescription="@string/avatar_alt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_max="500dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/avatar">
+
+                <TextView
+                    android:id="@+id/title_activity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="casual"
+                    android:shadowColor="#888888"
+                    android:text="@string/titleActivity"
+                    android:textColor="@color/foreground"
+                    android:textSize="40sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dataActivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_weight="1"
+                    android:fontFamily="casual"
+                    android:minLines="2"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="8dp"
+                    android:shadowColor="#888888"
+                    android:text="@string/empty"
+                    android:textColor="@color/foreground"
+                    android:textSize="28sp"
+                    android:textStyle="bold|italic" />
+
+                <TextView
+                    android:id="@+id/title_mood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="casual"
+                    android:shadowColor="#888888"
+                    android:text="@string/titleMood"
+                    android:textColor="@color/foreground"
+                    android:textSize="40sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dataMood"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:fontFamily="casual"
+                    android:minLines="2"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="8dp"
+                    android:shadowColor="#888888"
+                    android:text="@string/empty"
+                    android:textColor="@color/foreground"
+                    android:textSize="28sp"
+                    android:textStyle="bold|italic" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:fontFamily="casual"
+                android:shadowColor="#888888"
+                android:text="@string/titleAge"
+                android:textColor="@color/foreground"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+            <TextView
+                android:id="@+id/title_sus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="casual"
+                android:shadowColor="#888888"
+                android:text="@string/titleSus"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/foreground"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_age" />
+
+            <TextView
+                android:id="@+id/title_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="casual"
+                android:shadowColor="#888888"
+                android:text="@string/titleGender"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/foreground"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_sus" />
+
+            <TextView
+                android:id="@+id/title_updated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="casual"
+                android:shadowColor="#888888"
+                android:text="@string/titleUpdated"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/foreground"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_gender" />
+
+            <TextView
+                android:id="@+id/title_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:fontFamily="casual"
+                android:shadowColor="#FF888888"
+                android:shadowRadius="4"
+                android:text="@string/friend_history_title"
+                android:textAllCaps="false"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_updated" />
+
+            <ImageView
+                android:id="@+id/loadingImage"
+                android:layout_width="64dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/loader_animation"
+                android:scaleType="fitCenter"
+                android:src="@drawable/loading_48"
+                app:layout_constraintEnd_toEndOf="@+id/title_history"
+                app:layout_constraintStart_toStartOf="@+id/title_history"
+                app:layout_constraintTop_toBottomOf="@+id/title_history" />
+
+            <LinearLayout
+                android:id="@+id/history_data"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/loadingImage">
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/button_history"
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/buttonUpdateTitle"
+                android:scaleType="fitCenter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/history_data"
+                app:srcCompat="@drawable/history_48"
+                app:tint="@color/foreground" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

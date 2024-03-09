@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
@@ -11,7 +12,6 @@
         android:id="@+id/nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:fontFamily="casual"
@@ -20,6 +20,7 @@
         android:textColor="@color/foreground"
         android:textSize="40sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,22 +28,22 @@
         android:id="@+id/avatar"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="128dp"
         android:background="@drawable/android_128"
-        android:backgroundTint="#640A0A"
         android:contentDescription="@string/avatar_alt"
         app:layout_constraintBottom_toTopOf="@+id/scrollView3"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nickname" />
 
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/title_age">
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/dataUpdated"
+        app:layout_constraintHeight_percent="0.5"
+        tools:layout_editor_absoluteX="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -108,172 +109,142 @@
         </LinearLayout>
     </ScrollView>
 
-    <TextView
-        android:id="@+id/title_age"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:shadowColor="#888888"
-        android:text="@string/titleAge"
-        android:textColor="@color/foreground"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/title_sus"
-        app:layout_constraintStart_toStartOf="parent" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/title_age"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_weight="1"-->
+    <!--        android:fontFamily="casual"-->
+    <!--        android:shadowColor="#888888"-->
+    <!--        android:text="@string/titleAge"-->
+    <!--        android:textColor="@color/foreground"-->
+    <!--        android:textSize="24sp"-->
+    <!--        android:textStyle="bold"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/title_sus"-->
+    <!--        app:layout_constraintStart_toStartOf="parent" />-->
 
-    <TextView
-        android:id="@+id/dataAge"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:paddingStart="4dp"
-        android:paddingEnd="16dp"
-        android:shadowColor="#888888"
-        android:text="@string/empty"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@color/foreground"
-        android:textSize="24sp"
-        android:textStyle="bold|italic"
-        app:layout_constraintBottom_toBottomOf="@+id/title_age"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/title_age"
-        app:layout_constraintTop_toTopOf="@+id/title_age" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/dataAge"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_weight="1"-->
+    <!--        android:fontFamily="casual"-->
+    <!--        android:paddingStart="4dp"-->
+    <!--        android:paddingEnd="16dp"-->
+    <!--        android:shadowColor="#888888"-->
+    <!--        android:text="@string/empty"-->
+    <!--        android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+    <!--        android:textColor="@color/foreground"-->
+    <!--        android:textSize="24sp"-->
+    <!--        android:textStyle="bold|italic"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/title_age"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.0"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/title_age"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/title_age" />-->
 
-    <TextView
-        android:id="@+id/title_sus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:shadowColor="#888888"
-        android:text="@string/titleSus"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@color/foreground"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/title_gender"
-        app:layout_constraintStart_toStartOf="@+id/title_age" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/title_sus"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_weight="1"-->
+    <!--        android:fontFamily="casual"-->
+    <!--        android:shadowColor="#888888"-->
+    <!--        android:text="@string/titleSus"-->
+    <!--        android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+    <!--        android:textColor="@color/foreground"-->
+    <!--        android:textSize="24sp"-->
+    <!--        android:textStyle="bold"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/title_gender"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/title_age" />-->
 
 
-    <TextView
-        android:id="@+id/dataSus"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:paddingStart="4dp"
-        android:paddingEnd="16dp"
-        android:shadowColor="#888888"
-        android:text="@string/empty"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@color/foreground"
-        android:textSize="24sp"
-        android:textStyle="bold|italic"
-        app:layout_constraintBottom_toBottomOf="@+id/title_sus"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/title_sus"
-        app:layout_constraintTop_toTopOf="@+id/title_sus"
-        app:layout_constraintVertical_bias="0.533" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/dataSus"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_weight="1"-->
+    <!--        android:fontFamily="casual"-->
+    <!--        android:paddingStart="4dp"-->
+    <!--        android:paddingEnd="16dp"-->
+    <!--        android:shadowColor="#888888"-->
+    <!--        android:text="@string/empty"-->
+    <!--        android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+    <!--        android:textColor="@color/foreground"-->
+    <!--        android:textSize="24sp"-->
+    <!--        android:textStyle="bold|italic"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/title_sus"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.0"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/title_sus"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/title_sus"-->
+    <!--        app:layout_constraintVertical_bias="0.533" />-->
 
-    <TextView
-        android:id="@+id/title_gender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:shadowColor="#888888"
-        android:text="@string/titleGender"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@color/foreground"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/title_updated"
-        app:layout_constraintStart_toStartOf="@+id/title_sus" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/title_gender"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginBottom="8dp"-->
+    <!--        android:layout_weight="1"-->
+    <!--        android:fontFamily="casual"-->
+    <!--        android:shadowColor="#888888"-->
+    <!--        android:text="@string/titleGender"-->
+    <!--        android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+    <!--        android:textColor="@color/foreground"-->
+    <!--        android:textSize="24sp"-->
+    <!--        android:textStyle="bold"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/title_updated"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/title_sus" />-->
 
-    <TextView
-        android:id="@+id/dataGender"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:paddingStart="4dp"
-        android:paddingEnd="16dp"
-        android:shadowColor="#888888"
-        android:text="@string/empty"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@color/foreground"
-        android:textSize="24sp"
-        android:textStyle="bold|italic"
-        app:layout_constraintBottom_toBottomOf="@+id/title_gender"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/title_gender"
-        app:layout_constraintTop_toTopOf="@+id/title_gender" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/dataGender"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_weight="1"-->
+    <!--        android:fontFamily="casual"-->
+    <!--        android:paddingStart="4dp"-->
+    <!--        android:paddingEnd="16dp"-->
+    <!--        android:shadowColor="#888888"-->
+    <!--        android:text="@string/empty"-->
+    <!--        android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+    <!--        android:textColor="@color/foreground"-->
+    <!--        android:textSize="24sp"-->
+    <!--        android:textStyle="bold|italic"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/title_gender"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.0"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/title_gender"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/title_gender" />-->
 
-    <TextView
-        android:id="@+id/title_updated"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:shadowColor="#888888"
-        android:text="@string/titleUpdated"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@color/foreground"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/dataUpdated"
-        app:layout_constraintStart_toStartOf="@+id/title_gender" />
-
-    <TextView
-        android:id="@+id/dataDelta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:fontFamily="casual"
-        android:paddingHorizontal="4dp"
-        android:shadowColor="#888888"
-        android:text="@string/empty"
-        android:textColor="@color/foreground"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/title_updated"
-        app:layout_constraintStart_toEndOf="@+id/title_updated"
-        app:layout_constraintTop_toTopOf="@+id/title_updated" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/title_updated"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_weight="1"-->
+    <!--        android:fontFamily="casual"-->
+    <!--        android:shadowColor="#888888"-->
+    <!--        android:text="@string/titleUpdated"-->
+    <!--        android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+    <!--        android:textColor="@color/foreground"-->
+    <!--        android:textSize="20sp"-->
+    <!--        android:textStyle="bold"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/dataUpdated"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/title_gender" />-->
 
     <TextView
         android:id="@+id/dataUpdated"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_weight="1"
         android:fontFamily="casual"
-        android:paddingHorizontal="4dp"
+        android:paddingHorizontal="8dp"
         android:shadowColor="#888888"
         android:text="@string/empty"
         android:textColor="@color/foreground"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/title_updated" />
-
-    <ImageButton
-        android:id="@+id/button_history"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/buttonUpdateTitle"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_gender"
-        app:srcCompat="@drawable/history_48"
-        app:tint="@color/foreground" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

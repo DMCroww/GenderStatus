@@ -66,8 +66,8 @@ class PreferencesActivity: AppCompatActivity() {
 		// Load saved preferences
 		updateIntBar.progress = appData.updateInterval
 		intervalView.text = updateIntBar.progress.toString()
-		fontSizeBar.progress = appData.fontSize / 5
-		fontSizeView.text = (fontSizeBar.progress * 5).toString() + "%"
+		fontSizeBar.progress = (appData.fontSize * 20f).toInt()
+		fontSizeView.text = (fontSizeBar.progress * 100).toString() + "%"
 
 
 
@@ -84,7 +84,7 @@ class PreferencesActivity: AppCompatActivity() {
 			override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 				val value = progress * 5
 				fontSizeView.text = "$value%"
-				appData.fontSize = value
+				appData.fontSize = value / 100.0f
 			}
 
 			override fun onStartTrackingTouch(seekBar: SeekBar?) {}
