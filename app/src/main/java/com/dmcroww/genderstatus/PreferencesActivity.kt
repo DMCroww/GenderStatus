@@ -38,8 +38,6 @@ class PreferencesActivity: AppCompatActivity() {
 	private lateinit var userData: UserData
 	private lateinit var intervalView: TextView
 	private lateinit var updateIntBar: SeekBar
-	private lateinit var fontSizeView: TextView
-	private lateinit var fontSizeBar: SeekBar
 	private lateinit var backgrounds: JSONArray
 	private var backgroundsList: MutableList<Bitmap?> = mutableListOf()
 	private var backgroundsNames: MutableList<String> = mutableListOf()
@@ -60,14 +58,27 @@ class PreferencesActivity: AppCompatActivity() {
 		// Initialize UI elements
 		updateIntBar = findViewById(R.id.updateInt_bar)
 		intervalView = findViewById(R.id.updateInt_data)
-		fontSizeBar = findViewById(R.id.fontsize_bar)
-		fontSizeView = findViewById(R.id.fontsize_data)
+
+		val fontSizeView = findViewById<TextView>(R.id.fontsize_data)
+		fontSizeView.text = (appData.fontSize * 100).toString() + "%"
 
 		// Load saved preferences
 		updateIntBar.progress = appData.updateInterval
 		intervalView.text = updateIntBar.progress.toString()
-		fontSizeBar.progress = (appData.fontSize * 20f).toInt()
-		fontSizeView.text = (fontSizeBar.progress * 100).toString() + "%"
+
+		findViewById<SeekBar>(R.id.fontsize_bar).apply {
+			progress = (appData.fontSize * 20).toInt()
+
+			setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+				override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+				override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+				override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+					val value = progress * 5
+					fontSizeView.text = "$value%"
+					appData.fontSize = value / 100.0f
+				}
+			})
+		}
 
 
 
@@ -75,16 +86,6 @@ class PreferencesActivity: AppCompatActivity() {
 			override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 				intervalView.text = progress.toString()
 				appData.updateInterval = progress
-			}
-
-			override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-			override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-		})
-		fontSizeBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
-			override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-				val value = progress * 5
-				fontSizeView.text = "$value%"
-				appData.fontSize = value / 100.0f
 			}
 
 			override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -107,7 +108,6 @@ class PreferencesActivity: AppCompatActivity() {
 		val saveButton = findViewById<Button>(R.id.save_button)
 		saveButton.setOnClickListener {
 			try {
-				appData.save()
 				Toast.makeText(applicationContext, "Preferences saved", Toast.LENGTH_SHORT).show()
 				finish()
 				sendBroadcast(Intent("com.dmcroww.genderstatus.PREFERENCES_UPDATED"))
@@ -133,15 +133,41 @@ class PreferencesActivity: AppCompatActivity() {
 			builder.show()
 		}
 		// Color selection click listener
-		findViewById<Button>(R.id.button_color).setOnClickListener {
-			val colorPickerDialog = ColorPickerDialog(this, appData.textColorInt) {selectedColor ->
-				appData.textColorInt = selectedColor
-			}
-			colorPickerDialog.show()
+		findViewById<Button>(R.id.button_theme).setOnClickListener {
+			showThemeOptions(this)
+		}
+		findViewById<Button>(R.id.button_mode).setOnClickListener {
+			showDarkModeOptions(this)
 		}
 	}
 
 	private val handler = Handler(Looper.getMainLooper())
+
+	private fun showDarkModeOptions(context: Context) {
+		val options = arrayOf("Follow system", "Force Light", "Force Dark")
+
+		val builder = AlertDialog.Builder(context)
+		builder.setTitle("Select Dark Mode Option")
+		builder.setItems(options) {dialog, which ->
+			when (which) {
+				0 -> {
+					// Follow System
+					appData.darkMode = 0
+				}
+
+				1 -> {
+					// Force Light
+					appData.darkMode = 2
+				}
+
+				2 -> {
+					// Force Dark
+					appData.darkMode = 1
+				}
+			}
+		}
+		builder.show()
+	}
 
 	private fun showPredefinedBackgroundDialog() {
 		val dialogView = layoutInflater.inflate(R.layout.dialog_image_picker, null)
@@ -169,11 +195,38 @@ class PreferencesActivity: AppCompatActivity() {
 		}
 	}
 
+	private fun showThemeOptions(context: Context) {
+		val themes = arrayOf("Blue", "Pink", "Purple", "Magenta", "Red", "Orange", "Yellow", "Green")
+
+		val builder = AlertDialog.Builder(context)
+		builder.setTitle("Select Theme")
+
+		builder.setItems(themes) {_, which ->
+			val selectedTheme = themes[which]
+
+			// Save the selected theme ID in appData
+			val themeId = when (selectedTheme) {
+				"Blue" -> 1
+				"Pink" -> 2
+				"Purple" -> 3
+				"Magenta" -> 4
+				"Red" -> 5
+				"Orange" -> 6
+				"Yellow" -> 7
+				"Green" -> 8
+				else -> 0 // Default theme ID
+			}
+			appData.theme = themeId
+		}
+
+		builder.show()
+	}
+
 	private fun waitUntilBackgroundsLoaded(callback: () -> Unit) {
 		if (!backgroundsLoaded) {
 			handler.postDelayed({
 				waitUntilBackgroundsLoaded(callback)
-			}, 1000) // Wait for 1 second
+			}, 200) // Wait for 200ms
 		} else {
 			callback.invoke()
 		}

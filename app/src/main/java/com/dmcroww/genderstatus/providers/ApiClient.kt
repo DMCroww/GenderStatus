@@ -25,49 +25,35 @@ class ApiClient(context: Context) {
 	private var password: String = userData.password
 
 	fun login(username: String = this.username, password: String = this.password, onComplete: (Boolean, String) -> Unit) {
-		if (username.isBlank() || password.isBlank())
-			return onComplete(false, "User not logged in, login credentials empty.") // Notify the caller with the result
+		if (username.isBlank() || password.isBlank()) return onComplete(false, "User not logged in, login credentials empty.") // Notify the caller with the result
 
 		CoroutineScope(Dispatchers.IO).launch {
-			val response = makeCall(
-				"login",
-				JSONObject()
-					.put("username", username)
-					.put("password", password)
-			)
+			val response = makeCall("login", JSONObject().put("username", username).put("password", password))
 			val success = response.optBoolean("success", false)
 			var errorMessage = ""
 			if (success) {
 				userData.username = username
 				userData.password = password
-
 				val friendsString = response.getJSONObject("data").getString("friends")
 				val requestsString = response.getJSONObject("data").getString("requests")
-
 				userData.friends = friendsString.split("|").filter {it.isNotBlank()}.toTypedArray()
 				userData.requests = requestsString.split("|").filter {it.isNotBlank()}.toTypedArray()
 			} else {
 				errorMessage = response.optString("data", "undefined")
-
 				userData.username = ""
 				userData.password = ""
 				Log.d("API", "Login failed. ERROR: $errorMessage")
 			}
-
-			userData.save()
-
 			withContext(Dispatchers.Main) {
 				onComplete(success, errorMessage) // Notify the caller with the result
 			}
-
 		}
 	}
 
 	suspend fun getArray(action: String): JSONArray {
 		return withContext(Dispatchers.IO) {
 			val response = makeCall(action)
-			if (response.optBoolean("success", false))
-				response.getJSONArray("data")
+			if (response.optBoolean("success", false)) response.getJSONArray("data")
 			else JSONArray()
 		}
 	}
@@ -77,10 +63,8 @@ class ApiClient(context: Context) {
 			val list = mutableListOf<Status>()
 			val response = makeCall("get friend history", JSONObject().put("friend", friendUsername))
 			if (response.optBoolean("success", false)) {
-
 				val data = response.getJSONArray("data")
-				for (i in 0 until data.length())
-					list.add(Status(data.getJSONObject(i)))
+				for (i in 0 until data.length()) list.add(Status(data.getJSONObject(i)))
 			}
 			list
 		}
@@ -92,7 +76,6 @@ class ApiClient(context: Context) {
 			val response = makeCall("get friends")
 			if (response.optBoolean("success", false)) {
 				val data = response.getJSONArray("data")
-
 				for (i in 0 until data.length()) {
 					val obj = data.getJSONObject(i)
 					val username = obj.getString("username")
@@ -104,7 +87,6 @@ class ApiClient(context: Context) {
 	}
 
 	suspend fun postStatus(): JSONObject {
-		userData.load()
 		return withContext(Dispatchers.IO) {
 			makeCall("post status", JSONObject().put("status", userData.status.json()))
 		}
@@ -124,13 +106,11 @@ class ApiClient(context: Context) {
 
 	private suspend fun makeCall(action: String, data: JSONObject = JSONObject()): JSONObject {
 		return withContext(Dispatchers.IO) {
-			if (!data.has("username"))
-				data.put("username", username)
-			if (!data.has("password"))
-				data.put("password", password)
+			if (!data.has("username")) data.put("username", username)
+			if (!data.has("password")) data.put("password", password)
 
 			data.put("action", action)
-			Log.d("API call", data.toString())
+//			Log.d("API call", data.toString())
 
 			val url = URL(apiUrl)
 			val connection = url.openConnection() as HttpURLConnection
@@ -152,13 +132,12 @@ class ApiClient(context: Context) {
 				val reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
 				val responseStringBuilder = StringBuilder()
 				var line: String?
-				while (reader.readLine().also {line = it} != null)
-					responseStringBuilder.append(line).append("\n")
+				while (reader.readLine().also {line = it} != null) responseStringBuilder.append(line).append("\n")
 
 				reader.close()
 				inputStream.close()
 				val result = responseStringBuilder.toString()
-				Log.d("API response", result)
+//				Log.d("API response", result)
 
 				return@withContext JSONObject(result)
 			} catch (e: Exception) {

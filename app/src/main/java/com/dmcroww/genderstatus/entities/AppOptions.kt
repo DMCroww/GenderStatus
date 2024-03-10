@@ -9,43 +9,26 @@ import com.dmcroww.genderstatus.providers.StorageManager
 
 data class AppOptions(private val context: Context) {
 	private val storage = context.getSharedPreferences("appData", Context.MODE_PRIVATE)
-	var background: String = storage.getString("background", "")!!
-	var textColorInt: Int = storage.getInt("color", 0)
-	var updateInterval: Int = storage.getInt("updateInterval", 10)
-	var fontSize: Float = storage.getFloat("fontSize", 1.0f)
-	var lastCacheTs: Long = storage.getLong("lastCacheTs", 0L)
-	var debugToasts: Boolean = storage.getBoolean("debugToasts", false)
-	var finalColorIdx: Int = 0
-
-	init {
-		val defaultBackgroundIdx = if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
-		val colorsArray = context.resources.obtainTypedArray(R.array.color_sources)
-		this.finalColorIdx = if (this.textColorInt == 0 || this.background == "") colorsArray.getColor(defaultBackgroundIdx, 0) else this.textColorInt
-		colorsArray.recycle()
-	}
-
-	fun save() {
-		storage.edit()
-			.putString("background", this.background)
-			.putInt("color", this.textColorInt)
-			.putInt("updateInterval", this.updateInterval)
-			.putFloat("fontSize", this.fontSize)
-			.putLong("lastCacheTs", this.lastCacheTs)
-			.putBoolean("debugToasts", this.debugToasts)
-			.apply()
-	}
-
-	fun load() {
-		this.background = storage.getString("background", "")!!
-		this.textColorInt = storage.getInt("color", 0)
-		this.updateInterval = storage.getInt("updateInterval", 10)
-		this.fontSize = storage.getFloat("fontSize", 1.0f)
-		this.lastCacheTs = storage.getLong("lastCacheTs", 0L)
-		this.debugToasts = storage.getBoolean("debugToasts", false)
-	}
+	var background: String
+		get() = storage.getString("background", "")!!
+		set(value) = storage.edit().putString("background", value).apply()
+	var updateInterval: Int
+		get() = storage.getInt("updateInterval", 10)
+		set(value) = storage.edit().putInt("updateInterval", value).apply()
+	var fontSize: Float
+		get() = storage.getFloat("fontSize", 1.0f)
+		set(value) = storage.edit().putFloat("fontSize", value).apply()
+	var lastCacheTs: Long
+		get() = storage.getLong("lastCacheTs", 0L)
+		set(value) = storage.edit().putLong("lastCacheTs", value).apply()
+	var darkMode: Int
+		get() = storage.getInt("darkMode", 0) // Default value 0 for Follow System
+		set(value) = storage.edit().putInt("darkMode", value).apply()
+	var theme: Int
+		get() = storage.getInt("theme", 0) // Default theme ID
+		set(value) = storage.edit().putInt("theme", value).apply()
 
 	suspend fun setBackground(layout: ConstraintLayout, backgroundImageElement: ImageView) {
-		load()
 		val defaultBackgroundIdx = if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) 2 else 1
 
 		// Use the default values if the selected values are 0 (indicating "Default")

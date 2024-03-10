@@ -42,14 +42,12 @@ class UpdateService: Service() {
 
 
 		if (userData.username.isBlank() || userData.password.isBlank()) {
-			// User is not logged in, do not start the service
 			stopSelf()
 			return START_NOT_STICKY
 		}
 
 		if (!isServiceStarted) {
 			// Only start the timer once
-			appData.load()
 			timer.scheduleAtFixedRate(UpdateTask(), 0L, appData.updateInterval * 60000L)
 
 			// Register broadcast receiver for data updates
@@ -81,8 +79,6 @@ class UpdateService: Service() {
 	fun restartTimer() {
 		timer.cancel()
 		timer = Timer()
-		appData = AppOptions(applicationContext)
-		appData.load()
 		timer.scheduleAtFixedRate(UpdateTask(), 0L, appData.updateInterval * 60000L)
 	}
 
@@ -90,30 +86,19 @@ class UpdateService: Service() {
 	private fun fetchDataAndHandleUpdates() {
 		GlobalScope.launch(Dispatchers.Main) {
 			val friends = apiClient.fetchFriends()
-
-			// Update friends list concisely
 			userData.friends = friends.keys.toTypedArray()
-
-			// Iterate through friends, updating and notifying when necessary
 			friends.forEach {(key, obj) ->
 				Person(applicationContext, key).apply {
-					load()
 					val newStatus = Status(obj.optJSONObject("status") ?: JSONObject())
 					val newNick = obj.getString("nickname")
-
-					if (nickname != newNick) {
+					if (nickname != newNick)
 						nickname = newNick
-						save()
-					}
-
 					if (status.timestamp < newStatus.timestamp) {
 						status = newStatus
-						save()
 						notify(this)
 					}
 				}
 			}
-			userData.save()
 			sendBroadcast(Intent("com.dmcroww.genderstatus.DATA_UPDATED"))
 		}
 	}
@@ -156,7 +141,6 @@ class UpdateService: Service() {
 		override fun onReceive(context: Context, intent: Intent?) {
 			when (intent?.action) {
 				"com.dmcroww.genderstatus.PREFERENCES_UPDATED" -> restartTimer()
-
 				"com.dmcroww.genderstatus.FORCE_UPDATE" -> fetchDataAndHandleUpdates()
 			}
 		}

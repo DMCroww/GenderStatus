@@ -14,6 +14,7 @@ import android.text.format.DateUtils
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -34,8 +35,6 @@ class MainActivity: AppCompatActivity() {
 	private lateinit var apiClient: ApiClient
 
 	// Define UI elements
-	private lateinit var buttonPostStatus: ImageButton
-	private lateinit var buttonPreferences: ImageButton
 	private lateinit var notificationManager: NotificationManager
 	private lateinit var friendsList: Array<String>
 
@@ -67,8 +66,6 @@ class MainActivity: AppCompatActivity() {
 		val filter = IntentFilter().apply {
 			addAction("com.dmcroww.genderstatus.PREFERENCES_UPDATED")
 			addAction("com.dmcroww.genderstatus.DATA_UPDATED")
-			addAction("com.dmcroww.genderstatus.DATA_FAILED")
-			addAction("com.dmcroww.genderstatus.DATA_NOT_FOUND")
 		}
 
 		registerReceiver(updateReceiver, filter)
@@ -93,21 +90,22 @@ class MainActivity: AppCompatActivity() {
 	}
 
 	private fun continueSetup() {
-		appData = AppOptions(applicationContext)
-		storageManager = StorageManager(applicationContext)
-		userData = UserData(applicationContext)
+		appData = AppOptions(this)
+		storageManager = StorageManager(this)
+		userData = UserData(this)
 
 		notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 		notificationManager.createNotificationChannel(NotificationChannel("friends_update_channel", "Friends Status Updates", NotificationManager.IMPORTANCE_LOW))
 
 		setContentView(R.layout.act_main)
 
-		buttonPostStatus = findViewById(R.id.button_update)
-		buttonPreferences = findViewById(R.id.button_preferences)
-
 		startService(Intent(this, UpdateService::class.java))
-		buttonPostStatus.setOnClickListener {startActivity(Intent(this, PostStatusActivity::class.java))}
-		buttonPreferences.setOnClickListener {startActivity(Intent(this, PreferencesActivity::class.java))}
+		findViewById<ImageButton>(R.id.button_update).setOnClickListener {
+			startActivity(Intent(this, PostStatusActivity::class.java))
+		}
+		findViewById<ImageButton>(R.id.button_preferences).setOnClickListener {
+			startActivity(Intent(this, PreferencesActivity::class.java))
+		}
 
 		sendBroadcast(Intent("com.dmcroww.genderstatus.FORCE_UPDATE"))
 
@@ -126,16 +124,14 @@ class MainActivity: AppCompatActivity() {
 				}
 
 				appData.lastCacheTs = System.currentTimeMillis()
-				appData.save()
 			}
 		}
 	}
 
 	// Call this function whenever you want to refresh the ViewPager, such as in a broadcast receiver
 	private fun refreshViewPager() {
-		userData.load()
-		friendsList = userData.friends
 		val viewPager: ViewPager = findViewById(R.id.Pager)
+		friendsList = userData.friends
 		val adapter = SubScreenPagerAdapter(supportFragmentManager, friendsList)
 		viewPager.adapter = adapter
 	}
@@ -144,15 +140,27 @@ class MainActivity: AppCompatActivity() {
 	 * Sets the app's theme based on user preferences.
 	 */
 	private fun setTheme() {
-		appData.load()
 		lifecycleScope.launch {
 			appData.setBackground(findViewById(R.id.main_window), findViewById(R.id.backgroundImage))
+
+			val nightMode = when (appData.darkMode) {
+				1 -> AppCompatDelegate.MODE_NIGHT_YES
+				2 -> AppCompatDelegate.MODE_NIGHT_NO
+				else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+			}
+			AppCompatDelegate.setDefaultNightMode(nightMode)
+			when (appData.theme) {
+				1 -> setTheme(R.style.AppTheme_Blue)
+				2 -> setTheme(R.style.AppTheme_Pink)
+				3 -> setTheme(R.style.AppTheme_Purple)
+				4 -> setTheme(R.style.AppTheme_Magenta)
+				5 -> setTheme(R.style.AppTheme_Red)
+				6 -> setTheme(R.style.AppTheme_Orange)
+				7 -> setTheme(R.style.AppTheme_Yellow)
+				8 -> setTheme(R.style.AppTheme_Green)
+				else -> setTheme(R.style.AppTheme) // Default theme
+			}
 		}
-
-		val finalColorIdx = appData.finalColorIdx
-
-		buttonPostStatus.setColorFilter(finalColorIdx)
-		buttonPreferences.setColorFilter(finalColorIdx)
 	}
 
 	/**
@@ -162,15 +170,8 @@ class MainActivity: AppCompatActivity() {
 		override fun onReceive(context: Context, intent: Intent?) {
 			Log.d("Broadcast", intent?.action.toString())
 			when (intent?.action) {
-				"com.dmcroww.genderstatus.DATA_UPDATED" -> {
-					userData.load()
-					if (!(friendsList.sortedArray() contentEquals userData.friends.sortedArray()))
-						refreshViewPager()
-				}
-
-				"com.dmcroww.genderstatus.PREFERENCES_UPDATED" -> {
-					setTheme()
-				}
+				"com.dmcroww.genderstatus.DATA_UPDATED" -> if (!(friendsList.sortedArray() contentEquals userData.friends.sortedArray())) refreshViewPager()
+				"com.dmcroww.genderstatus.PREFERENCES_UPDATED" -> setTheme()
 			}
 		}
 	}

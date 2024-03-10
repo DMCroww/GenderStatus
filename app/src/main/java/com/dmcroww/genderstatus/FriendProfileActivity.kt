@@ -3,7 +3,6 @@ package com.dmcroww.genderstatus
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
 import android.text.InputType
@@ -80,7 +79,6 @@ class FriendProfileActivity: AppCompatActivity() {
 
 		username = intent.getStringExtra("username")!!
 		person = Person(context, username)
-		person.load()
 
 		setContentView(R.layout.act_friend_profile)
 
@@ -94,21 +92,14 @@ class FriendProfileActivity: AppCompatActivity() {
 	private fun initializeUI() {
 
 		historyDataLayout = findViewById(R.id.history_data)
-		findViewById<ImageView>(R.id.button_history).apply {
-			setColorFilter(appData.finalColorIdx)
-			setOnClickListener {
+		findViewById<ImageView>(R.id.button_history).setOnClickListener {
 //			loadMoreHistory()
-			}
 		}
 
-		findViewById<ImageButton>(R.id.button_editDisplayName).apply {
-			setColorFilter(appData.finalColorIdx)
-			setOnClickListener {
-				showTextInputDialog("Change Displayed Name", "Input new Display name for user @$username") {
-					person.displayName = it
-					person.save()
-					findViewById<TextView>(R.id.nickname).text = it
-				}
+		findViewById<ImageButton>(R.id.button_editDisplayName).setOnClickListener {
+			showTextInputDialog("Change Displayed Name", "Input new Display name for user @$username") {
+				person.displayName = it
+				findViewById<TextView>(R.id.nickname).text = it
 			}
 		}
 
@@ -134,59 +125,43 @@ class FriendProfileActivity: AppCompatActivity() {
 		val status = person.status
 
 		findViewById<TextView>(R.id.nickname).apply {
-			setTextColor(appData.finalColorIdx)
 			textSize = bigSize
 			text = if (person.displayName.isNotBlank()) person.displayName else if (person.nickname.isNotBlank()) person.nickname else username
 		}
 
-		findViewById<TextView>(R.id.title_activity).apply {
-			setTextColor(appData.finalColorIdx)
-			textSize = bigSize
-		}
+		findViewById<TextView>(R.id.title_activity).textSize = bigSize
+		findViewById<TextView>(R.id.title_mood).textSize = bigSize
+		findViewById<TextView>(R.id.title_history).textSize = bigSize
+
 		findViewById<TextView>(R.id.dataActivity).apply {
-			setTextColor(appData.finalColorIdx)
 			textSize = medSize
 			text = status.activity
 		}
-		findViewById<TextView>(R.id.title_mood).apply {
-			setTextColor(appData.finalColorIdx)
-			textSize = bigSize
-		}
 		findViewById<TextView>(R.id.dataMood).apply {
-			setTextColor(appData.finalColorIdx)
 			textSize = medSize
 			text = status.mood
 		}
 		findViewById<TextView>(R.id.title_sus).apply {
-			setTextColor(appData.finalColorIdx)
 			textSize = smallSize
 			text = getString(R.string.titleSus, if (status.sus > 0) "${(status.sus - 1) * 10}%" else "...")
 		}
 		findViewById<TextView>(R.id.title_age).apply {
-			setTextColor(appData.finalColorIdx)
 			textSize = smallSize
 			text = getString(R.string.titleSus, ages[status.age])
 		}
 		findViewById<TextView>(R.id.title_gender).apply {
-			setTextColor(appData.finalColorIdx)
 			textSize = smallSize
 			text = getString(R.string.titleGender, genders[status.gender])
 		}
 		findViewById<TextView>(R.id.title_updated).apply {
-			setTextColor(appData.finalColorIdx)
 			textSize = tinySize
 			text = getString(R.string.titleUpdated, timestampToRelativePlus(status.timestamp))
 		}
-		findViewById<TextView>(R.id.title_history).apply {
-			setTextColor(appData.finalColorIdx)
-			textSize = bigSize
-		}
-
 
 		lifecycleScope.launch {
 			val image = StorageManager(context).fetchAvatar(status.avatar)
 			findViewById<ImageView>(R.id.avatar).apply {
-				backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(appData.finalColorIdx))
+//				backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(appData.finalColorIdx))
 				if (image != null) {
 					setImageBitmap(image)
 					setBackgroundColor(0)
@@ -215,7 +190,7 @@ class FriendProfileActivity: AppCompatActivity() {
 						val image = storageManager.fetchAvatar(status.avatar)
 
 						entryView.findViewById<ImageView>(R.id.avatar).apply {
-							backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(appData.finalColorIdx))
+//							backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), intArrayOf(appData.finalColorIdx))
 							if (image != null) {
 								setImageBitmap(image)
 								setBackgroundColor(0)
@@ -224,23 +199,19 @@ class FriendProfileActivity: AppCompatActivity() {
 
 						entryView.findViewById<TextView>(R.id.activity).apply {
 							text = status.activity
-							setTextColor(appData.finalColorIdx)
 							textSize = bigSize
 						}
 
 						entryView.findViewById<TextView>(R.id.mood).apply {
 							text = status.mood
-							setTextColor(appData.finalColorIdx)
 							textSize = medSize
 						}
 						entryView.findViewById<TextView>(R.id.date).apply {
 							text = timestampToRelativePlus(status.timestamp)
-							setTextColor(appData.finalColorIdx)
 							textSize = tinySize
 						}
 						entryView.findViewById<TextView>(R.id.other).apply {
 							text = "${genders[status.gender]} ${ages[status.age]}, ${if (status.sus > 0) "${(status.sus - 1) * 10}%sus" else "..."}"
-							setTextColor(appData.finalColorIdx)
 							textSize = smallSize
 						}
 						runOnUiThread {
