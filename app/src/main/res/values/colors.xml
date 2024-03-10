@@ -1,10 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="bright">#FFEEEEEE</color>
-    <color name="dark">#FF111111</color>
-    <color name="background">@color/white</color>
-    <color name="foreground">@color/black</color>
+    <color name="white">#FFFFFF</color>
+    <color name="bright">#DDDDDD</color>
+    <color name="light">#AAAAAA</color>
+    <color name="medium">#888888</color>
+    <color name="dark">#444444</color>
+    <color name="darker">#111111</color>
+    <color name="black">#000000</color>
+
+    <!--  COLORS  -->
+    <color name="blueBright">#AACCFF</color>
+    <color name="blueLight">#88AAFF</color>
+    <color name="blue">#0088FF</color>
+    <color name="blueDark">#0000FF</color>
+    <color name="blueDarker">#000088</color>
+
+    <color name="pinkLight">#FFAADD</color>
+    <color name="pink">#FF22BB</color>
+    <color name="pinkDark">#BB0088</color>
+
+    <color name="purpleLight">#DD88FF</color>
+    <color name="purple">#BB00FF</color>
+    <color name="purpleDark">#770099</color>
+
+    <color name="magentaLight">#FF88FF</color>
+    <color name="magenta">#FF00FF</color>
+    <color name="magentaDark">#880088</color>
+
+    <color name="redLight">#FF8888</color>
+    <color name="red">#FF0000</color>
+    <color name="redDark">#880000</color>
+
+    <color name="orangeLight">#FFBB88</color>
+    <color name="orange">#FFA500</color>
+    <color name="orangeDark">#BB6600</color>
+
+    <color name="yellowLight">#FFFFAA</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="yellowDark">#888800</color>
+
+    <color name="greenLight">#88FF88</color>
+    <color name="green">#00FF00</color>
+    <color name="greenDark">#008800</color>
 
 </resources>

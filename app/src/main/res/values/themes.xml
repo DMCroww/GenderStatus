@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="@style/Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your default (dayNight) theme here. -->
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:statusBarColor">@color/bright</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/darker</item>
+
+        <item name="colorSurface">@color/dark</item>
+        <item name="colorPrimary">@color/dark</item>
+        <item name="colorPrimaryDark">@color/darker</item>
+        <item name="colorPrimarySurface">@color/darker</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/darker</item>
+        <item name="colorSecondaryVariant">@color/darker</item>
+        <item name="colorOnSecondary">@color/bright</item>
+
+        <item name="colorControlNormal">@color/medium</item>
+        <item name="colorControlActivated">@color/medium</item>
+        <item name="colorControlHighlight">@color/dark</item>
+    </style>
+
+
+    <style name="AppTheme.Blue" parent="@style/AppTheme">
+        <item name="android:statusBarColor">@color/blue</item>
+        <item name="android:textColor">@color/blueDark</item>
+        <item name="android:textColorHint">@color/blue</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/blueLight</item>
+        <item name="colorPrimaryDark">@color/blueDark</item>
+        <item name="colorPrimarySurface">@color/blueLight</item>
+
+        <item name="colorSecondary">@color/blue</item>
+
+        <item name="colorControlNormal">@color/blueDark</item>
+        <item name="colorControlActivated">@color/blue</item>
+        <item name="colorControlHighlight">@color/blueLight</item>
+    </style>
+
+    <style name="AppTheme.Pink" parent="@style/AppTheme">
+        <item name="android:statusBarColor">@color/pink</item>
+        <item name="android:textColor">@color/pinkDark</item>
+        <item name="android:textColorHint">@color/pink</item>
+        <item name="colorPrimary">@color/pink</item>
+        <item name="colorPrimaryDark">@color/pinkDark</item>
+        <item name="colorPrimarySurface">@color/pinkLight</item>
+        <item name="colorPrimaryVariant">@color/pinkLight</item>
+
+        <item name="colorSecondary">@color/pink</item>
+
+        <item name="colorControlNormal">@color/pinkDark</item>
+        <item name="colorControlActivated">@color/pink</item>
+        <item name="colorControlHighlight">@color/pinkLight</item>
+    </style>
+
+    <style name="AppTheme.Purple" parent="@style/AppTheme">
+        <item name="android:statusBarColor">@color/purple</item>
+        <item name="android:textColor">@color/purpleDark</item>
+        <item name="android:textColorHint">@color/purple</item>
+        <item name="colorPrimary">@color/purple</item>
+        <item name="colorPrimaryDark">@color/purpleDark</item>
+        <item name="colorPrimarySurface">@color/purpleLight</item>
+        <item name="colorPrimaryVariant">@color/purpleLight</item>
+
+        <item name="colorSecondary">@color/purple</item>
+
+        <item name="colorControlNormal">@color/purpleDark</item>
+        <item name="colorControlActivated">@color/purple</item>
+        <item name="colorControlHighlight">@color/purpleLight</item>
+    </style>
+
+    <style name="AppTheme.Magenta" parent="@style/AppTheme">
+        <item name="android:statusBarColor">@color/magenta</item>
+        <item name="android:textColor">@color/magentaDark</item>
+        <item name="android:textColorHint">@color/magenta</item>
+        <item name="colorPrimary">@color/magenta</item>
+        <item name="colorPrimaryDark">@color/magentaDark</item>
+        <item name="colorPrimarySurface">@color/magentaLight</item>
+        <item name="colorPrimaryVariant">@color/magentaLight</item>
+
+        <item name="colorSecondary">@color/magenta</item>
+
+        <item name="colorControlNormal">@color/magentaDark</item>
+        <item name="colorControlActivated">@color/magenta</item>
+        <item name="colorControlHighlight">@color/magentaLight</item>
+    </style>
+
+    <style name="AppTheme.Red" parent="@style/AppTheme">
+        <item name="android:statusBarColor">@color/red</item>
+        <item name="android:textColor">@color/redDark</item>
+        <item name="android:textColorHint">@color/red</item>
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorPrimaryDark">@color/redDark</item>
+        <item name="colorPrimarySurface">@color/redLight</item>
+        <item name="colorPrimaryVariant">@color/redLight</item>
+
+        <item name="colorSecondary">@color/red</item>
+
+        <item name="colorControlNormal">@color/redDark</item>
+        <item name="colorControlActivated">@color/red</item>
+        <item name="colorControlHighlight">@color/redLight</item>
+    </style>
+
+    <style name="AppTheme.Orange" parent="@style/AppTheme">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/orangeLight</item>
+        <item name="android:textColor">@color/orangeDark</item>
+        <item name="android:textColorHint">@color/orange</item>
+        <item name="colorPrimary">@color/orange</item>
+        <item name="colorPrimaryDark">@color/orangeDark</item>
+        <item name="colorPrimarySurface">@color/orangeLight</item>
+        <item name="colorPrimaryVariant">@color/orangeLight</item>
+        <item name="colorOnPrimary">@color/dark</item>
+
+        <item name="colorSecondary">@color/orange</item>
+
+        <item name="colorControlNormal">@color/orangeDark</item>
+        <item name="colorControlActivated">@color/orange</item>
+        <item name="colorControlHighlight">@color/orangeLight</item>
+    </style>
+
+    <style name="AppTheme.Yellow" parent="@style/AppTheme">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/yellow</item>
+        <item name="android:textColor">@color/orangeDark</item>
+        <item name="android:textColorHint">@color/yellow</item>
+        <item name="colorPrimary">@color/yellow</item>
+        <item name="colorPrimaryDark">@color/yellowDark</item>
+        <item name="colorPrimarySurface">@color/yellowLight</item>
+        <item name="colorPrimaryVariant">@color/yellowLight</item>
+        <item name="colorOnPrimary">@color/dark</item>
+
+        <item name="colorSecondary">@color/yellow</item>
+
+        <item name="colorControlNormal">@color/yellowDark</item>
+        <item name="colorControlActivated">@color/yellow</item>
+        <item name="colorControlHighlight">@color/yellowLight</item>
+    </style>
+
+    <style name="AppTheme.Green" parent="@style/AppTheme">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/green</item>
+        <item name="android:textColor">@color/greenDark</item>
+        <item name="android:textColorHint">@color/green</item>
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryDark">@color/greenDark</item>
+        <item name="colorPrimarySurface">@color/greenLight</item>
+        <item name="colorPrimaryVariant">@color/greenLight</item>
+        <item name="colorOnPrimary">@color/dark</item>
+
+        <item name="colorSecondary">@color/green</item>
+
+        <item name="colorControlNormal">@color/greenDark</item>
+        <item name="colorControlActivated">@color/green</item>
+        <item name="colorControlHighlight">@color/greenLight</item>
+    </style>
+
+
+</resources>

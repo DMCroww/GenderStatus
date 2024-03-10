@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="background_sources">
-        <item>@color/background</item>
+        <item>@color/bright</item>
         <item>@color/bright</item>
         <item>@color/dark</item>
     </string-array>
 
     <string-array name="color_sources">
-        <item>@color/foreground</item>
+        <item>@color/dark</item>
         <item>@color/dark</item>
         <item>@color/bright</item>
     </string-array>

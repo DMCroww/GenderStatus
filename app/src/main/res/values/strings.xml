@@ -13,7 +13,8 @@
     <string name="background_title">Background:</string>
     <string name="save">Save</string>
     <string name="titleUpdateInt">Update interval (minutes): </string>
-    <string name="select_color">Text color:</string>
+    <string name="select_color">App theme:</string>
+    <string name="select_mode">Dark mode:</string>
     <string name="hintAvatar">Tap me! -></string>
     <string name="titleUpdated">Last updated: %s</string>
     <string name="buttonHistoryTitle">History</string>
@@ -34,4 +35,5 @@
     <string name="add_friend_username">Friend\'s username</string>
     <string name="edit_nickname">Edit nickname</string>
     <string name="remove_friend">Remove friend</string>
+    <string name="select">Select</string>
 </resources>

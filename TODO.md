@@ -8,6 +8,7 @@
 
 #### Friends management:
 
+- [ ] friends list activity
 - [ ] friend request/add dialog?
 - [x] friend nickname editing dialog
 - [ ] remove friend dialog
@@ -23,7 +24,6 @@
 #### Help screen:
 
 - [ ] create a help screen/menu
-
 - [ ] General usage help
 - [ ] Requesting custom avatars
 - [ ] FAQ list
