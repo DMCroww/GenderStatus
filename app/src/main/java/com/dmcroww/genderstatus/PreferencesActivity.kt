@@ -7,13 +7,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -302,76 +300,6 @@ class PreferencesActivity: AppCompatActivity() {
 			}
 
 			return imageView
-		}
-	}
-
-	class ColorPickerDialog(context: Context, private val currentColor: Int, private val onColorSelected: (Int) -> Unit) {
-
-		@SuppressLint("InflateParams")
-		private val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_color_picker, null)
-		private val hueSeekBar = dialogView.findViewById<SeekBar>(R.id.hueSeekBar)
-		private val saturationSeekBar = dialogView.findViewById<SeekBar>(R.id.saturationSeekBar)
-		private val valueSeekBar = dialogView.findViewById<SeekBar>(R.id.valueSeekBar)
-		private val previewText = dialogView.findViewById<TextView>(R.id.colorValueText)
-
-		init {
-			setupSeekBars()
-			setColor(currentColor)
-		}
-
-		private fun setupSeekBars() {
-
-			val hsv = FloatArray(3)
-			Color.colorToHSV(currentColor, hsv)
-			hueSeekBar.progress = (hsv[0] * 10).toInt()
-			saturationSeekBar.progress = (hsv[1] * 1000).toInt()
-			valueSeekBar.progress = (hsv[2] * 1000).toInt()
-
-			hueSeekBar.setOnSeekBarChangeListener(createSeekBarChangeListener())
-			saturationSeekBar.setOnSeekBarChangeListener(createSeekBarChangeListener())
-			valueSeekBar.setOnSeekBarChangeListener(createSeekBarChangeListener())
-		}
-
-		private fun createSeekBarChangeListener(): SeekBar.OnSeekBarChangeListener {
-			return object: SeekBar.OnSeekBarChangeListener {
-				override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-					val hue = hueSeekBar.progress.toFloat() / 10.0f
-					val saturation = saturationSeekBar.progress.toFloat() / 1000.0f
-					val value = valueSeekBar.progress.toFloat() / 1000.0f
-
-					setColor(Color.HSVToColor(floatArrayOf(hue, saturation, value)))
-				}
-
-				override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-				override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-			}
-		}
-
-		private fun setColor(color: Int) {
-			val hsv = FloatArray(3)
-			Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv)
-			previewText.setTextColor(color)
-		}
-
-		fun show() {
-			val builder = AlertDialog.Builder(dialogView.context)
-			builder.setView(dialogView)
-			builder.setPositiveButton("OK") {_, _ ->
-				onColorSelected(
-					Color.HSVToColor(
-						floatArrayOf(
-							hueSeekBar.progress.toFloat() / 10.0f, saturationSeekBar.progress.toFloat() / 1000.0f, valueSeekBar.progress.toFloat() / 1000.0f
-						)
-					)
-				)
-			}
-			builder.setNegativeButton("Cancel") {dialog, _ ->
-				dialog.dismiss()
-			}
-
-			val dialog = builder.create()
-			dialog.show()
 		}
 	}
 }
