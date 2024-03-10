@@ -40,7 +40,6 @@
 
     <SeekBar
         android:id="@+id/updateInt_bar"
-        style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="0dp"
         android:layout_height="32dp"
         android:layout_marginEnd="32dp"
@@ -48,10 +47,8 @@
         android:max="30"
         android:min="1"
         android:progress="3"
-        android:progressBackgroundTint="#000000"
         android:progressBackgroundTintMode="screen"
         android:thumb="@android:drawable/btn_default"
-        android:thumbTint="#6750A3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/updateInt_title"
         app:layout_constraintTop_toBottomOf="@+id/updateInt_title" />
@@ -79,20 +76,16 @@
 
     <SeekBar
         android:id="@+id/fontsize_bar"
-        style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="0dp"
         android:layout_height="32dp"
-        android:layout_marginEnd="32dp"
-        android:indeterminate="false"
+        android:layout_marginHorizontal="32dp"
         android:max="25"
         android:min="15"
         android:progress="20"
-        android:progressBackgroundTint="#000000"
         android:progressBackgroundTintMode="screen"
         android:thumb="@android:drawable/btn_default"
-        android:thumbTint="#6750A3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/updateInt_title"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fontsize_title" />
 
     <TextView
@@ -118,26 +111,46 @@
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/color_title"
+        android:id="@+id/theme_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:labelFor="@id/button_color"
+        android:labelFor="@id/button_theme"
         android:text="@string/select_color"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="@+id/background_title"
         app:layout_constraintTop_toBottomOf="@+id/background_title" />
 
     <Button
-        android:id="@+id/button_color"
+        android:id="@+id/button_theme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
-        android:text="Select"
-        app:layout_constraintBottom_toBottomOf="@+id/color_title"
+        android:text="@string/select"
+        app:layout_constraintBottom_toBottomOf="@+id/theme_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/color_title"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toTopOf="@+id/theme_title" />
+
+    <TextView
+        android:id="@+id/mode_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:labelFor="@id/button_theme"
+        android:text="@string/select_mode"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/background_title"
+        app:layout_constraintTop_toBottomOf="@id/theme_title" />
+
+    <Button
+        android:id="@+id/button_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="@string/select"
+        app:layout_constraintBottom_toBottomOf="@id/mode_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mode_title" />
 
     <Button
         android:id="@+id/save_button"

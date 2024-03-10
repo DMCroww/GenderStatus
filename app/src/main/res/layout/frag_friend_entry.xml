@@ -17,7 +17,6 @@
         android:fontFamily="casual"
         android:shadowColor="#888888"
         android:text="@string/nickname"
-        android:textColor="@color/foreground"
         android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,6 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/android_128"
+        android:backgroundTint="?attr/colorPrimary"
         android:contentDescription="@string/avatar_alt"
         app:layout_constraintBottom_toTopOf="@+id/scrollView3"
         app:layout_constraintDimensionRatio="1:1"
@@ -58,7 +58,6 @@
                 android:fontFamily="casual"
                 android:shadowColor="#888888"
                 android:text="@string/titleActivity"
-                android:textColor="@color/foreground"
                 android:textSize="40sp"
                 android:textStyle="bold" />
 
@@ -75,7 +74,6 @@
                 android:paddingEnd="8dp"
                 android:shadowColor="#888888"
                 android:text="@string/empty"
-                android:textColor="@color/foreground"
                 android:textSize="28sp"
                 android:textStyle="bold|italic" />
 
@@ -87,7 +85,6 @@
                 android:fontFamily="casual"
                 android:shadowColor="#888888"
                 android:text="@string/titleMood"
-                android:textColor="@color/foreground"
                 android:textSize="40sp"
                 android:textStyle="bold" />
 
@@ -103,7 +100,6 @@
                 android:paddingEnd="8dp"
                 android:shadowColor="#888888"
                 android:text="@string/empty"
-                android:textColor="@color/foreground"
                 android:textSize="28sp"
                 android:textStyle="bold|italic" />
         </LinearLayout>
@@ -240,7 +236,6 @@
         android:paddingHorizontal="8dp"
         android:shadowColor="#888888"
         android:text="@string/empty"
-        android:textColor="@color/foreground"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

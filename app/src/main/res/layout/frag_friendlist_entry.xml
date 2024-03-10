@@ -48,8 +48,7 @@
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toStartOf="@+id/button_remove"
         app:layout_constraintTop_toTopOf="@+id/info"
-        app:srcCompat="@drawable/edit_48"
-        app:tint="@color/foreground" />
+        app:srcCompat="@drawable/edit_48" />
 
     <TextView
         android:id="@+id/edit_label"
@@ -69,8 +68,7 @@
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/info"
-        app:srcCompat="@drawable/remove_48"
-        app:tint="@color/foreground" />
+        app:srcCompat="@drawable/remove_48" />
 
     <TextView
         android:id="@+id/remove_label"

@@ -12,15 +12,15 @@
         android:layout_height="200dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
+        android:background="@drawable/android_128"
+        android:backgroundTint="?attr/colorPrimary"
         android:contentDescription="@string/avatar_alt"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/android_128" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/avatar_hint"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -36,7 +36,6 @@
 
     <TextView
         android:id="@+id/title_activity"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -68,7 +67,6 @@
 
     <TextView
         android:id="@+id/title_mood"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -97,7 +95,6 @@
 
     <TextView
         android:id="@+id/title_age"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -108,22 +105,8 @@
         app:layout_constraintBottom_toTopOf="@+id/age_slider"
         app:layout_constraintStart_toStartOf="@+id/title_mood" />
 
-    <TextView
-        android:id="@+id/age_preview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="casual"
-        android:text="@string/empty"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/age_slider"
-        app:layout_constraintStart_toEndOf="@+id/title_age"
-        app:layout_constraintTop_toTopOf="@+id/title_age" />
-
     <SeekBar
         android:id="@+id/age_slider"
-        style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="0dp"
         android:layout_height="32dp"
         android:layout_marginStart="32dp"
@@ -141,7 +124,6 @@
 
     <TextView
         android:id="@+id/title_sus"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -152,22 +134,8 @@
         app:layout_constraintBottom_toTopOf="@+id/sus_slider"
         app:layout_constraintStart_toStartOf="@+id/title_mood" />
 
-    <TextView
-        android:id="@+id/sus_preview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="casual"
-        android:text="@string/empty"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/sus_slider"
-        app:layout_constraintStart_toEndOf="@+id/title_sus"
-        app:layout_constraintTop_toTopOf="@+id/title_sus" />
-
     <SeekBar
         android:id="@+id/sus_slider"
-        style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="0dp"
         android:layout_height="32dp"
         android:layout_marginStart="32dp"
@@ -184,7 +152,6 @@
 
     <TextView
         android:id="@+id/title_gender"
-        style="@android:style/Widget.DeviceDefault.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -195,22 +162,8 @@
         app:layout_constraintBottom_toTopOf="@+id/gender_slider"
         app:layout_constraintStart_toStartOf="@+id/title_mood" />
 
-    <TextView
-        android:id="@+id/gender_preview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="casual"
-        android:text="@string/empty"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/gender_slider"
-        app:layout_constraintStart_toEndOf="@+id/title_gender"
-        app:layout_constraintTop_toTopOf="@+id/title_gender" />
-
     <SeekBar
         android:id="@+id/gender_slider"
-        style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="0dp"
         android:layout_height="32dp"
         android:layout_marginStart="32dp"
@@ -226,7 +179,6 @@
 
     <Button
         android:id="@+id/button_save"
-        style="@style/Widget.AppCompat.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

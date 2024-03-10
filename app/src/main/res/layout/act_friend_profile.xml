@@ -29,7 +29,6 @@
         android:fontFamily="casual"
         android:shadowColor="#888888"
         android:text="@string/nickname"
-        android:textColor="@color/foreground"
         android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/button_editDisplayName"
@@ -49,7 +48,7 @@
         app:layout_constraintStart_toEndOf="@+id/nickname"
         app:layout_constraintTop_toTopOf="@+id/nickname"
         app:srcCompat="@drawable/edit_48"
-        app:tint="@color/foreground" />
+        app:tint="?attr/colorPrimaryDark" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -71,6 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:background="@drawable/android_128"
+                android:backgroundTint="?attr/colorPrimary"
                 android:contentDescription="@string/avatar_alt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_max="500dp"
@@ -92,7 +92,6 @@
                     android:fontFamily="casual"
                     android:shadowColor="#888888"
                     android:text="@string/titleActivity"
-                    android:textColor="@color/foreground"
                     android:textSize="40sp"
                     android:textStyle="bold" />
 
@@ -109,7 +108,6 @@
                     android:paddingEnd="8dp"
                     android:shadowColor="#888888"
                     android:text="@string/empty"
-                    android:textColor="@color/foreground"
                     android:textSize="28sp"
                     android:textStyle="bold|italic" />
 
@@ -121,7 +119,6 @@
                     android:fontFamily="casual"
                     android:shadowColor="#888888"
                     android:text="@string/titleMood"
-                    android:textColor="@color/foreground"
                     android:textSize="40sp"
                     android:textStyle="bold" />
 
@@ -137,7 +134,6 @@
                     android:paddingEnd="8dp"
                     android:shadowColor="#888888"
                     android:text="@string/empty"
-                    android:textColor="@color/foreground"
                     android:textSize="28sp"
                     android:textStyle="bold|italic" />
             </LinearLayout>
@@ -151,7 +147,6 @@
                 android:fontFamily="casual"
                 android:shadowColor="#888888"
                 android:text="@string/titleAge"
-                android:textColor="@color/foreground"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -166,7 +161,6 @@
                 android:shadowColor="#888888"
                 android:text="@string/titleSus"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@color/foreground"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -181,7 +175,6 @@
                 android:shadowColor="#888888"
                 android:text="@string/titleGender"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@color/foreground"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -196,7 +189,6 @@
                 android:shadowColor="#888888"
                 android:text="@string/titleUpdated"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@color/foreground"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -225,6 +217,7 @@
                 android:contentDescription="@string/loader_animation"
                 android:scaleType="fitCenter"
                 android:src="@drawable/loading_48"
+                app:tint="?attr/colorPrimaryDark"
                 app:layout_constraintEnd_toEndOf="@+id/title_history"
                 app:layout_constraintStart_toStartOf="@+id/title_history"
                 app:layout_constraintTop_toBottomOf="@+id/title_history" />
@@ -252,8 +245,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/history_data"
-                app:srcCompat="@drawable/history_48"
-                app:tint="@color/foreground" />
+                android:src="@drawable/history_48"
+                app:tint="?attr/colorPrimaryDark" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
